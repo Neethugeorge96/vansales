@@ -1,0 +1,40 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+      <div>
+          Work Centers
+      </div>
+  </h1>
+</div>
+<div class="card p-3">
+  <div>
+
+    <ejs-grid [dataSource]='supplierLineData' [allowPaging]='true'>
+        <e-columns>
+          <e-column field='purchaseRequestLineId' headerText='Line No' width='120'></e-column>
+          <e-column field='itemId' headerText='Item Id' width='120'></e-column>
+          <e-column field='itemCode' headerText='Item Code' width='120'></e-column>
+          <e-column field='itemName' headerText='Item Name' width='130'></e-column>
+          <e-column field='supplierQuoteQuantity' headerText='Quantity' width='150'></e-column>
+          <e-column field='purchaseUomCode' headerText='Uom Code' width='150'></e-column>
+          <e-column field='purchaseCurrencyCode' headerText='Currency Code' width='150'></e-column>
+          <e-column headerText='Action' width='150' >
+            <ng-template #template let-data>
+              <div class="btn-group" dropdown container="main">
+                <button id="button-basic" dropdownToggle type="button"
+                  class="border-0 mr-2 pr-2 dropdown-toggle btn-more" aria-controls="dropdown-basic">
+                  <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right mt-6" role="menu"
+                  aria-labelledby="button-basic">
+                  <ng-container *ngFor="let action of rowAction">
+                    <li role="menuitem"><a class="dropdown-item">{{action}}</a></li>
+                  </ng-container>
+                </ul>
+              </div>
+            </ng-template>
+          </e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
+  </div>
+  

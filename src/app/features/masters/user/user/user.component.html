@@ -1,0 +1,358 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        User Details
+    </h1>
+</div>
+<div class="subpage-content">
+  <div class="card p-3">
+      <div>
+          <ejs-grid #grid [dataSource]='userList'
+              (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+              (actionComplete)='actionComplete($event)'  rowHeight="25"
+              [allowPaging]='true'
+              [allowSorting]='true'
+              [pageSettings]="syncfusionHelperService.initialPage"
+            [rowHeight]="syncfusionHelperService.height"
+              (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+              [toolbar]="syncfusionHelperService.toolbarExternal"
+              [editSettings]="syncfusionHelperService.editExternal"
+              (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+              (created)="syncfusionHelperService.created(grid)"
+              (load)="syncfusionHelperService.load(grid)"
+              [allowResizing]='true'>
+              <e-columns>
+                  <e-column headerText='S.No.' width='40'>
+                      <ng-template #template let-d>
+                          <div>{{ +d.index+1 }}</div>
+                      </ng-template>
+                  </e-column>
+                  <e-column field='employeeName' headerText='Employee Name' isPrimaryKey='true'></e-column>
+                  <e-column field='userName' headerText='User Name'></e-column>
+                  <e-column field='lineManager' headerText=' Line Manager'></e-column>
+
+                  <e-column headerText='Is Active' width='60'>
+                      <ng-template #template let-data>
+                          <div >
+                            <span class="e-badge" [ngClass]="{'e-badge-yes' : data.userStatus === true,
+                              'e-badge-no' : data.userStatus === false
+                            }">
+                            {{data.userStatus?'Yes':'No'}}
+                            </span>
+                         </div>
+                      </ng-template>
+                  </e-column>
+                  <!-- <e-column field='createdDate' headerText='Created Date'>
+                    <ng-template #template let-d>
+                        {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                    </ng-template>
+                </e-column> -->
+                  <e-column headerText='Action' width="90" [commands]="syncfusionHelperService.commands"></e-column>
+              </e-columns>
+              <ng-template #editSettingsTemplate let-data>
+                  <div [formGroup]="userForm">
+                      <div class="d-flex flex-wrap">
+                          <div class="form-group col-12" [ngClass]="{'e-error': employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClicked)}">
+
+
+                            <ejs-dropdownlist   formControlName="employeeId"  [dataSource]='employeeList' [fields]="{text: 'diplayText', value: 'id' }"  placeholder="Employee Name"
+                            floatLabelType='Auto' cssClass='e-filled' [allowFiltering]='true' (filtering)=" syncfusionHelperService.onFiltering(  $event,  employeeList,  'code', 'employeeName')"></ejs-dropdownlist>
+                             <sup class="text-danger">*</sup>
+
+
+                            <div *ngIf="employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClicked)"
+                            class="e-error d-block">
+                              <div *ngIf="employeeId.errors.required">
+                                  Employee name is required.
+                              </div>
+                              <div *ngIf="employeeId.errors?.duplicate">
+                                Employee already exists
+                              </div>
+                            </div>
+                          </div>
+
+                    <div class="form-group col-12"
+                        [ngClass]="{'e-error': branchId.invalid && (branchId.dirty || branchId.touched || submitClicked)}">
+
+
+
+                         <ejs-multiselect id='sample-list1' formControlName="branchId" [dataSource]='branchList' mode="default" [fields]="{text:'branchName', value:'id'}"
+                           placeholder="Branch" floatLabelType='Auto' cssClass='e-filled'></ejs-multiselect>
+                          <sup class="text-danger">*</sup>
+
+                          <div *ngIf="branchId.invalid && (branchId.dirty || branchId.touched || submitClicked)"  class="e-error d-block">
+                            <div *ngIf="branchId.errors.required">
+                                Branch is required.
+                            </div>
+                          </div>
+                      </div>
+
+                <div class="form-label-group col-12"
+                    [ngClass]="{'e-error': userName.invalid && (userName.dirty || userName.touched || submitClicked)}">
+
+                        <input type="text" class="form-control e-input input-control" id="username"  placeholder="User Name" formControlName="userName" autocomplete ='off'>
+
+                        <label class="input-control-placeholder" for="username">User Name</label>
+                        <sup class="text-danger">*</sup>
+
+                        <!-- <ejs-textbox placeholder="User Name" cssClass="e-filled" floatLabelType="Auto"></ejs-textbox> -->
+
+
+                        <div *ngIf="userName.invalid && (userName.dirty || userName.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="userName.errors.required">
+                                User name is required.
+                            </div>
+                            <div *ngIf="userName.errors.maxlength">
+                                User name cannot be more than 36 characters.
+                            </div>
+                        </div>
+                </div>
+
+
+                <div class="form-label-group col-12"
+                    [ngClass]="{'e-error': password.invalid && (password.dirty || password.touched || submitClicked)}">
+
+                        <input type="password" class="e-input input-control" id="password" formControlName="password" placeholder="password"  (ngModelChange)="checkPasswords()">
+
+                        <label class="input-control-placeholder" for="password">Password</label>
+                        <sup class="text-danger">*</sup>
+
+                        <div *ngIf="password.invalid && (password.dirty || password.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="password.errors.required">
+                                Password is required.
+                            </div>
+                            <div *ngIf="password.errors.pattern">
+                                Password should contain an uppercase, lowercase, numeric & a special character.
+                            </div>
+                            <div *ngIf="password.errors.minlength">
+                                Password should contain atleast 8 characters.
+                            </div>
+                        </div>
+                </div>
+                <div class="form-label-group col-12"
+                    [ngClass]="{'e-error': confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched || submitClicked) || !passwordCheck}">
+
+                    <input type="text" class="e-input input-control" id="confirmPassword" formControlName="confirmPassword" placeholder="confirm password"  (ngModelChange)="checkPasswords()">
+                    <label class="input-control-placeholder" for="confirmPassword">Confirm Password</label>
+                    <sup class="text-danger">*</sup>
+                    <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched || submitClicked) || !passwordCheck"
+                        class="e-error d-block">
+                        <div *ngIf="confirmPassword.errors?.required">
+                            Confirm Password is required.
+                        </div>
+                        <div *ngIf="!passwordCheck">
+                            Password & confirm password should match.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group col-12" [ngClass]="{'e-error': LineManagerId.invalid && (LineManagerId.dirty || LineManagerId.touched || submitClicked)}">
+
+
+                  <ejs-dropdownlist   formControlName="lineManagerId"  [dataSource]='supervisorList' [fields]="{text: 'diplayText', value: 'id' }"  placeholder="Line Manager"
+                  floatLabelType='Auto' cssClass='e-filled' [allowFiltering]='true'  (filtering)=" syncfusionHelperService.onFiltering(  $event,  employeeList,  'code', 'employeeName')"></ejs-dropdownlist>
+                   <sup class="text-danger">*</sup>
+
+
+                  <div *ngIf="LineManagerId.invalid && (LineManagerId.dirty || LineManagerId.touched || submitClicked)"
+                  class="e-error d-block">
+                    <div *ngIf="LineManagerId.errors.required">
+                        Line Manager is required.
+                    </div>
+
+                  </div>
+                </div>
+
+              <div class="form-group col-6">
+                  <div>
+                      <ejs-checkbox  formControlName="userStatus"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label for="userStatus">Is Active</label>
+                  </div>
+              </div>
+              <div class="form-group col-6">
+                  <div>
+                      <ejs-checkbox  formControlName="mobileAccess"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label for="mobileAccess">Android Access</label>
+                  </div>
+              </div>
+
+              <div class="form-group col-6">
+                  <div>
+                      <ejs-checkbox  formControlName="webAccess"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label for="webAccess">Web Access</label>
+                  </div>
+              </div>
+              <div class="form-group col-6">
+                  <div>
+                      <ejs-checkbox  formControlName="addCustomer"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label for="addCustomer">Add Customer</label>
+                  </div>
+              </div>
+              <hr>
+
+              <!-- <div class="form-group col-12"><hr></div> -->
+
+              <div class="form-group col-6 ">
+                  <div>
+                      <ejs-checkbox  formControlName="import"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label for="import">Import</label>
+                  </div>
+              </div>
+              <div class="form-group col-6 ">
+                  <div>
+                      <ejs-checkbox  formControlName="exportSalesDetails"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label class="pt-2" for="exportSalesDetails">Export 1<br>(Sales Details)</label>
+                  </div>
+              </div>
+              <div class="form-group col-12 pl-6 mt-n4">
+                  <div>
+                      <ejs-checkbox  formControlName="exportRemainingStock"></ejs-checkbox>
+                  </div>
+                  <div>
+                      <label class="" for="exportRemainingStock">Export 2<br>(Remaining Stock Details)</label>
+                  </div>
+              </div>
+              <div class="form-group col-12 e-error" style="font-size: 12px;">
+                  <!-- <div class="e-error"> -->
+                      Note: User's password will be used for Import & Export
+                  <!-- </div> -->
+              </div>
+                  </div>
+              </div>
+          </ng-template>
+      </ejs-grid>
+  </div>
+</div>
+</div>
+
+
+
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            User Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Employee Name :</div>
+                <div class="w-25 text-truncate" title="{{userView?.employeeName}}"> {{userView?.employeeName}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>User Name : </div>
+                <div class="w-50 text-truncate" title="{{userView?.userName}}"> {{userView?.userName}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6 ">
+                <div>Branch Name:</div>
+                <div> {{userView?.branchName}} </div>
+            </div>
+            <div class="view-item col-6 showPwd">
+                <div class="d-flex">
+                    <div>Password:</div>
+                    <div> {{showPwd ? userView?.password : 'XXXXXXX'}} </div>
+                </div>
+                <div class="mt-1">
+                    <ejs-checkbox  [(ngModel)]="showPwd"></ejs-checkbox>
+                    <label class="ml-2">Show Password</label>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Line Manager :</div>
+              <div class="w-30 text-truncate" title="{{userView?.lineManager}}"> {{userView?.lineManager}} </div>
+          </div>
+
+          <div class="view-item col-6">
+            <div>Is Active:</div>
+            <div> {{userView?.userStatus ? 'Yes' : 'No'}} </div>
+        </div>
+
+      </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div>Android Access:</div>
+                <div> {{userView?.mobileAccess ? 'Yes' : 'No'}} </div>
+            </div>
+
+            <div class="view-item col-6">
+                <div>Web Access:</div>
+                <div> {{userView?.webAccess ? 'Yes' : 'No'}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div>Add Customer:</div>
+                <div> {{userView?.addCustomer ? 'Yes' : 'No'}} </div>
+            </div>
+
+            <div class="view-item col-6">
+                <div>Import:</div>
+                <div> {{userView?.import ? 'Yes' : 'No'}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div>Export 1:</div>
+                <div> {{userView?.exportSalesDetails ? 'Yes' : 'No'}} </div>
+            </div>
+
+            <div class="view-item col-6">
+                <div>Export 2:</div>
+                <div> {{userView?.exportRemainingStock ? 'Yes' : 'No'}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{userView?.createdDate}} </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>
+
+
+
+
+
+
+
+

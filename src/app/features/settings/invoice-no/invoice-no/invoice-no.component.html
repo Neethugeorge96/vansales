@@ -1,0 +1,195 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+     Invoice No Details
+  </h1>
+</div>
+<div class="subpage-content">
+  <div class="card p-3">
+      <div>
+          <ejs-grid #grid [dataSource]='invoiceList'
+              (actionBegin)='actionBegin($event)' gridLines='Both'
+              (actionComplete)='actionComplete($event)'
+               rowHeight="25"
+               [allowSorting]='true'
+              [allowPaging]='true'
+              [pageSettings]="syncfusionHelperService.initialPage"
+            [rowHeight]="syncfusionHelperService.height"
+              (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+              [toolbar]="syncfusionHelperService.toolbarExternal"
+              [editSettings]="syncfusionHelperService.editExternal"
+              (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+              (created)="syncfusionHelperService.created(grid)"
+              (load)="syncfusionHelperService.load(grid)"
+              (queryCellInfo)='queryCellInfo($event)'
+              [allowResizing]='true'>
+
+              <e-columns>
+                  <e-column headerText='S.No.' width='68'>
+                      <ng-template #template let-d>
+                          <div>{{ +d.index+1 }}</div>
+                      </ng-template>
+                  </e-column>
+                  <e-column field='routeNo' headerText='Route No.' isPrimaryKey='true' width="105"></e-column>
+                  <e-column field='docYear' headerText='Doc Year' width="100"></e-column>
+                  <e-column field='salesCashSequenceNo' headerText='Sales CS Seq No.' width="160"></e-column>
+                  <e-column field='salesCreditSequenceNo' headerText='Sales CR Seq No.' width="160"></e-column>
+                  <e-column field='returnCashSequenceNo' headerText='Return CS Seq No.' width="165"></e-column>
+                  <e-column field='returnCreditSequenceNo' headerText='Return CR Seq No.' width="165"></e-column>
+                  <e-column field='leadingZeroLength' headerText='Leading Zero Length' width="190"></e-column>
+                  <e-column headerText='Is Active' width="100">
+                    <ng-template #template let-data>
+                        <div >
+                          <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isActive === true,
+                            'e-badge-no' : data.isActive === false
+                          }">
+                          {{data.isActive?'Yes':'No'}}
+                          </span>
+                       </div>
+                    </ng-template>
+                </e-column>
+
+                  <e-column headerText='Action' width="100" [commands]="commands" ></e-column>
+              </e-columns>
+              <ng-template #editSettingsTemplate let-data >
+                  <div [formGroup]="invoiceFrm">
+                      <div class="d-flex flex-wrap">
+                        <div class="form-group col-12"  [ngClass]="{'e-error': routeId.invalid && (routeId.dirty || routeId.touched || submitClicked)}">
+                            <ejs-dropdownlist (filtering)=" syncfusionHelperService.onFiltering(  $event,  routeList,  'routeNo', 'routeName')"
+                            formControlName="routeId"  [dataSource]='routeList'   [allowFiltering]="true"   [fields]="{text: 'diplayText', value: 'id' }"
+                              placeholder="Route No."   floatLabelType='Auto'  (ngModelChange)="onDocYearchange()"   cssClass='e-static-clear e-filled'>
+                            </ejs-dropdownlist>
+                            <sup class="text-danger">*</sup>
+                              <div *ngIf="routeId.invalid && (routeId.dirty || routeId.touched || submitClicked)"
+                                  class="e-error d-block">
+                                  <div *ngIf="routeId.errors.required">
+                                      Route No. is required.
+                                  </div>
+                              </div>
+                         </div>
+
+
+
+                        <div class="form-group col-12"  [ngClass]="{'e-error': docYear.invalid && (docYear.dirty || docYear.touched || submitClicked)}">
+
+                          <ejs-dropdownlist formControlName="docYear"  [dataSource]='yearList'   [allowFiltering]="true"
+                              placeholder="Doc Year"   floatLabelType='Auto' cssClass='e-static-clear e-filled' (ngModelChange)="onDocYearchange()">
+                            </ejs-dropdownlist>
+                          <sup class="text-danger">*</sup>
+                          <div *ngIf="docYear.invalid && (docYear.dirty || docYear.touched || submitClicked)"
+                          class="e-error d-block">
+                          <div *ngIf="docYear.errors.required">
+                            Doc Year is required.
+                          </div>
+                      </div>
+                      </div>
+                          <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': salesCashSequenceNo.invalid && (salesCashSequenceNo.dirty || salesCashSequenceNo.touched || submitClicked)}">
+                                  <input type="text" class=" e-input  input-control" id="salesCashSequenceNo" formControlName="salesCashSequenceNo" placeholder="Sales Seq.No">
+                                  <label class="input-control-placeholder" for="salesCashSequenceNo">Sales Cash Seq.No.</label>
+                                  <sup class="text-danger">*</sup>
+                                  <div *ngIf="salesCashSequenceNo.invalid && (salesCashSequenceNo.dirty || salesCashSequenceNo.touched || submitClicked)"
+                                      class="e-error d-block">
+                                      <div *ngIf="salesCashSequenceNo.errors.required">
+                                          Sales Cash Seq.No. is required.
+                                      </div>
+                                      <div *ngIf="salesCashSequenceNo.errors.min">
+                                        Sales Cash Seq.No. cannot be lesser than current value.
+                                      </div>
+
+
+                                  </div>
+                          </div>
+
+                          <div class="form-label-group col-12"
+                          [ngClass]="{'e-error': salesCreditSequenceNo.invalid && (salesCreditSequenceNo.dirty || salesCreditSequenceNo.touched || submitClicked)}">
+                              <input type="text" class=" e-input  input-control" id="salesCreditSequenceNo" formControlName="salesCreditSequenceNo" placeholder="Sales Seq.No">
+                              <label class="input-control-placeholder" for="salesCreditSequenceNo">Sales Credit Seq.No.</label>
+                              <sup class="text-danger">*</sup>
+                              <div *ngIf="salesCreditSequenceNo.invalid && (salesCreditSequenceNo.dirty || salesCreditSequenceNo.touched || submitClicked)"
+                                  class="e-error d-block">
+                                  <div *ngIf="salesCreditSequenceNo.errors.required">
+                                      Sales Credit Seq.No. is required.
+                                  </div>
+                                  <div *ngIf="salesCreditSequenceNo.errors.min">
+                                    Sales Credit Seq.No. cannot be lesser than current value.
+                                  </div>
+
+
+                              </div>
+                      </div>
+
+                          <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': returnCashSequenceNo.invalid && (returnCashSequenceNo.dirty || returnCashSequenceNo.touched || submitClicked)}">
+
+                                  <input type="text"  class=" e-input  input-control" id="returnCashSequenceNo" formControlName="returnCashSequenceNo" placeholder="Return Seq.No." onkeydown="return event.keyCode !== 69">
+                                  <label class="input-control-placeholder" for="returnCashSequenceNo">Return Cash Seq.No.</label>
+                                  <sup class="text-danger">*</sup>
+
+                                  <div *ngIf="returnCashSequenceNo.invalid && (returnCashSequenceNo.dirty || returnCashSequenceNo.touched || submitClicked)"  class="e-error d-block">
+                                      <div *ngIf="returnCashSequenceNo.errors.required">
+                                        Return Cash Seq.No. is required.
+                                      </div>
+                                      <div *ngIf="returnCashSequenceNo.errors.min">
+                                        Return Cash Seq.No. cannot be lesser than current value.
+                                      </div>
+
+
+                                  </div>
+                          </div>
+
+                          <div class="form-label-group col-12"
+                          [ngClass]="{'e-error': returnCreditSequenceNo.invalid && (returnCreditSequenceNo.dirty || returnCreditSequenceNo.touched || submitClicked)}">
+
+                              <input type="text"  class=" e-input  input-control" id="returnCreditSequenceNo" formControlName="returnCreditSequenceNo" placeholder="Return Seq.No." onkeydown="return event.keyCode !== 69">
+                              <label class="input-control-placeholder" for="returnCreditSequenceNo">Return Credit Seq.No.</label>
+                              <sup class="text-danger">*</sup>
+
+                              <div *ngIf="returnCreditSequenceNo.invalid && (returnCreditSequenceNo.dirty || returnCreditSequenceNo.touched || submitClicked)"  class="e-error d-block">
+                                  <div *ngIf="returnCreditSequenceNo.errors.required">
+                                    Return Credit Seq.No. is required.
+                                  </div>
+                                  <div *ngIf="returnCreditSequenceNo.errors.min">
+                                    Return Credit Seq.No. cannot be lesser than current value.
+                                  </div>
+
+
+                              </div>
+                      </div>
+
+                          <div class="form-label-group col-12"
+                          [ngClass]="{'e-error': leadingZeroLength.invalid && (leadingZeroLength.dirty || leadingZeroLength.touched || submitClicked)}">
+
+                              <input type="text"  class=" e-input  input-control" id="leadingZeroLength" formControlName="leadingZeroLength" placeholder="Leading Zero Length" onkeydown="return event.keyCode !== 69">
+                              <label class="input-control-placeholder" for="leadingZeroLength">Leading zero Length</label>
+                              <sup class="text-danger">*</sup>
+
+                              <div *ngIf="leadingZeroLength.invalid && (leadingZeroLength.dirty || leadingZeroLength.touched || submitClicked)"  class="e-error d-block">
+                                  <div *ngIf="leadingZeroLength.errors.required">
+                                      Leading zero Length is required.
+                                  </div>
+                                  <div *ngIf="leadingZeroLength.errors.pattern">
+                                    Only zero are allowed.
+                                </div>
+                                <div *ngIf="leadingZeroLength.errors.maxlength">
+                                  Max limit is 8.
+                              </div>
+
+
+
+
+                              </div>
+                          </div>
+                          <div class="form-group col-12">
+                              <div class="d-flex ml-1">
+                                <ejs-checkbox  formControlName="isActive"></ejs-checkbox>
+                                <label class="pl-2 pt-1" for="isActive">Is Active</label>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </ng-template>
+          </ejs-grid>
+      </div>
+  </div>
+</div>
+

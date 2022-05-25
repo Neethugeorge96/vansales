@@ -1,0 +1,3 @@
+<select class="form-control" id="stateId" (change)="onSelectChange($event)">
+    <option *ngFor="let state of states" value={{state.id}}>{{state.name}}</option>
+</select>

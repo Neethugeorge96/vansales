@@ -1,0 +1,14 @@
+<ejs-grid class="tablegroup" #grid (rowDeselected)='rowDeselected($event)' (rowSelected)='rowSelected($event)' [dataSource]='data' allowPaging='true' allowSorting="true" [allowGrouping]="true" [groupSettings]="groupOptions" [pageSettings]='pageSettings'
+        height="320" [allowSelection]="true"  (dataBound)='dataBound()' (created)='created()' (load)='load()'>
+  <e-columns>
+    <e-column type='checkbox' width='50'></e-column>
+    <e-column field='purchaserequestnumber' headerText="PR Number" width='120'></e-column>
+    <e-column field='itemname' headerText='Item Name' width='120'></e-column>
+    <e-column field='itemCommodityCode' headerText='Commodity' width='120'></e-column>
+    <e-column field='purchaserequestdate' headerText='Date' type='dateTime' format='dd-MM-yyyy hh:mm a'  width='180'></e-column>
+    <e-column field='purchasestatus' headerText='UOM' width='120'></e-column>
+    <e-column field='requestQuantity' headerText='Qty' width='100'></e-column>
+    <e-column field='projectCode' headerText='Project' width='120'></e-column>
+    
+  </e-columns>
+</ejs-grid>

@@ -1,0 +1,136 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Item Grouping
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='itemgroupingsList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'
+                 rowHeight="25"
+                 [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+
+                <e-columns>
+                    <e-column headerText='S.No.' width='40'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='code' width="70" headerText='Code' isPrimaryKey='true'></e-column>
+                    <e-column field='name' headerText='Name' width="110"></e-column>
+                    <e-column headerText='Product' width="250">
+                        <ng-template #template let-data>
+                            <div>
+                                {{data.itemNames}}
+                                 <!-- {{items?[data.itemId]}} -->
+                            </div>
+                          </ng-template>
+                    </e-column>
+                    <e-column headerText='Action' width="60" [commands]="syncfusionHelperService.commands" ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data >
+                    <div [formGroup]="itemGroupForm">
+                        <div class="d-flex flex-wrap">
+                            <div [ngClass]="{'form-label-group': code.value, 'form-group' : !code.value }" class="col-12">
+                                <input type="text" class=" e-input  input-control" id="code" formControlName="code">
+                                <label class="input-control-placeholder" for="code">Code</label>
+                                <sup class="text-danger">*</sup>
+                        </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': name.invalid && (name.dirty || name.touched || submitClicked)}">
+                                    <input type="text" class=" e-input  input-control" id="name" formControlName="name" placeholder="itemName">
+                                    <label class="input-control-placeholder" for="name">Name</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="name.invalid && (name.dirty || name.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="name.errors.required">
+                                            Name is required.
+                                        </div>
+                                        <div *ngIf="name.errors.maxlength">
+                                            Name cannot be more than 32 characters.
+                                        </div>
+                                        <div *ngIf="name.errors.duplicate">
+                                             Name already exists.
+                                        </div>
+                                        <!-- <div *ngIf="itemName.errors.pattern">
+                                            Special characters are not allowed.
+                                        </div> -->
+                                    </div>
+                            </div>
+                            <div class="form-group col-12"
+                                [ngClass]="{'e-error': itemId.invalid && (itemId.dirty || itemId.touched || submitClicked)}">
+                                <ejs-multiselect id='sample-list1' formControlName="itemId" [dataSource]='items' mode="default" [fields]="{text:'itemName', value:'id'}"
+                                placeholder="Items" floatLabelType='Auto' cssClass='e-filled'></ejs-multiselect>
+                                   <!-- <label class="input-control-placeholder" for="uomMasterId">Uom</label> -->
+                                   <sup class="text-danger">*</sup>
+                                    <div *ngIf="itemId.invalid && (itemId.dirty || itemId.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="itemId.errors.required">
+                                            Item is required.
+                                        </div>
+                                    </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Item Grouping Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Code :</div>
+                <div> {{itemGroupView?.code}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Name : </div>
+                <div class="w-50 text-truncate" title="{{itemGroupView?.name}}"> {{itemGroupView?.name}} </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Items :</div>
+                <div class="w-75 text-truncate" title="{{itemGroupView?.itemNames}}"> {{itemGroupView?.itemNames}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{itemGroupView?.createdDate}} </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>
+

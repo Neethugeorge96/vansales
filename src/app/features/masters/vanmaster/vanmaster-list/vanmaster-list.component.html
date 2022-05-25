@@ -1,0 +1,211 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Van Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='vanMasterList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'
+                rowHeight="25"
+                [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='vanNumber' headerText='Van No.' isPrimaryKey='true'></e-column>
+                    <e-column field='vanRegNumber' headerText='Van Reg No.'></e-column>
+                    <e-column field='vanModel' headerText='Van Model'></e-column>
+                    <!-- <e-column field='capacity' headerText='Capacity'></e-column>
+                    <e-column field='color' headerText='Color'></e-column> -->
+                    <!-- <e-column field='createdDate' headerText='Created Date'>
+                        <ng-template #template let-d>
+                            {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                        </ng-template>
+                    </e-column> -->
+                    <e-column headerText='Action' width="80" [commands]="syncfusionHelperService.commands" ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="vanmasterForm">
+                        <div class="d-flex flex-wrap">
+                            <div class="form-label-group col-12" [ngClass]="{'e-error': vanNumber.invalid && (vanNumber.dirty || vanNumber.touched || submitClicked)}">
+                                    <input type="text" class="form-control e-input input-control" id="vanNumber"  placeholder="Van Number" formControlName="vanNumber">
+                                    <label class="input-control-placeholder" for="vanNumber">Van No.</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="vanNumber.invalid && (vanNumber.dirty || vanNumber.touched || submitClicked)"
+                                    class="e-error d-block">
+                                      <div *ngIf="vanNumber.errors.required">
+                                          Van No. is required.
+                                      </div>
+                                      <div *ngIf="vanNumber.errors.duplicate">
+                                          Van No. already exists.
+                                      </div>
+                                      <div *ngIf="vanNumber.errors.pattern?.requiredPattern == '^([A-Za-z0-9 ])*$'">
+                                          Special characters are not allowed.
+                                      </div>
+                                      <div *ngIf="vanNumber.errors.pattern?.requiredPattern == '/0*[1-9a-zA-z][0-9a-zA-z]*(\\.[0-9a-zA-z]+)?/'">
+                                        Van No. can't be zero.
+                                    </div>
+                                      <div *ngIf="vanNumber.errors.maxlength">
+                                        Van No. maxlimit is 12 characters.
+                                    </div>
+                                    </div>
+                            </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': vanRegNumber.invalid && (vanRegNumber.dirty || vanRegNumber.touched || submitClicked)}">
+
+                                    <input type="text" class="form-control e-input input-control" id="vanRegNumber"  placeholder="Van Reg No." formControlName="vanRegNumber">
+                                    <label class="input-control-placeholder" for="vanRegNumber">Van Reg No.</label>
+                                    <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="vanRegNumber.invalid && (vanRegNumber.dirty || vanRegNumber.touched || submitClicked)"
+                                    class="e-error d-block">
+                                      <div *ngIf="vanRegNumber.errors.required">
+                                          Van Reg No. is required.
+                                      </div>
+                                      <div *ngIf="vanRegNumber.errors.duplicate">
+                                          Van Reg No. already exists.
+                                      </div>
+                                      <div *ngIf="vanRegNumber.errors.pattern">
+                                          Special characters are not allowed.
+                                      </div>
+                                      <div *ngIf="vanRegNumber.errors.maxlength">
+                                          Reg No. maxlimit is 12 characters.
+                                      </div>
+                                    </div>
+                            </div>
+
+                            <div class="form-label-group col-12"
+                            [ngClass]="{'e-error': vanModel.invalid && (vanModel.dirty || vanModel.touched || submitClicked)}">
+
+                                <input type="text" class="form-control e-input input-control" id="vanModel"  placeholder="Van Model" formControlName="vanModel">
+                                <label class="input-control-placeholder" for="vanModel">Van Model</label>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="vanModel.invalid && (vanModel.dirty || vanModel.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="vanModel.errors.required">
+                                        Van Model is required.
+                                    </div>
+                                    <div *ngIf="vanModel.errors.pattern">
+                                        Special characters are not allowed.
+                                    </div>
+                                    <div *ngIf="vanModel.errors.maxlength">
+                                        Van Model maxlimit is 16 characters.
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': capacity.invalid && (capacity.dirty || capacity.touched || submitClicked)}">
+
+                                    <input type="number" class="form-control e-input input-control" id="capacity"  placeholder="Capacity" formControlName="capacity"   onkeydown="return event.keyCode !== 69">
+                                    <label class="input-control-placeholder" for="capacity">Capacity</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="capacity.invalid && (capacity.dirty || capacity.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="capacity.errors.required">
+                                        Capacity is required.
+                                   </div>
+                                    <div *ngIf="capacity.errors.max">
+                                        Capacity maxlimit is 10 characters.
+                                   </div>
+                                   <div *ngIf="capacity.errors.min">
+                                    Capacity cannot be zero.
+                               </div>
+                                    </div>
+                            </div>
+
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': color.invalid && (color.dirty || color.touched || submitClicked)}">
+                                    <input type="text" class="form-control e-input input-control" id="color"  placeholder="Color" formControlName="color">
+                                    <label class="input-control-placeholder" for="color">Color</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="color.invalid && (color.dirty || color.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="color.errors.required">
+                                         Color is required.
+                                    </div>
+                                    <div *ngIf="color.errors.maxlength">
+                                        Color maxlimit is 12 characters.
+                                   </div>
+
+                                    </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Van Master Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Van No. :</div>
+                <div> {{vanmasterView?.vanNumber}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Van Reg No. : </div>
+                <div> {{vanmasterView?.vanRegNumber}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Van Model :</div>
+                <div class="w-50 text-truncate" title="{{vanmasterView.vanModel}}"> {{vanmasterView?.vanModel}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Capacity : </div>
+                <div> {{vanmasterView?.capacity}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Color :</div>
+                <div> {{vanmasterView?.color}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Created Date:</div>
+                <div>{{vanmasterView?.createdDate | date: 'dd-MMM-yyyy'}}</div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

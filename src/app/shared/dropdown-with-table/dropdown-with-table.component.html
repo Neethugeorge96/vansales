@@ -1,0 +1,39 @@
+<div [formGroup]="dropdownForm">
+  <ejs-dropdownlist
+    [dataSource]="source"
+    [fields]="{ text: 'itemFamilyName', value: 'itemFamilyCode' }"
+    [placeholder]="'Select'"
+    [footerTemplate]="footerTemplate"
+    formControlName="id"
+    (filtering)="onFilteringDropdown($event, fields.value, fields.text, data)"
+    (change)="valueChange($event)"
+  >
+    <ng-template #headerTemplate let-data1>
+      <span
+        ><span class="dropdown-grid-head1"> Code </span
+        ><span class="dropdown-grid-head2">Name</span></span
+      >
+    </ng-template>
+    <ng-template #itemTemplate let-data1>
+      <span
+        ><span class="dropdown-grid-col1">
+          {{ returnValue(data1, "Code") }} </span
+        ><span class="dropdown-grid-col2">{{
+          returnValue(data1, "Name")
+        }}</span></span
+      >
+    </ng-template>
+    <!-- <ng-template #itemTemplate let-data>
+    <span
+      ><span class="name"> {{ data.itemFamilyCode }}-</span
+      ><span class="city">{{ data.itemFamilyName }}</span></span
+    >
+  </ng-template> -->
+    <ng-template #footerTemplate="" let-data="">
+      <button class="foot btn btn-link">Add New Family</button>
+    </ng-template>
+  </ejs-dropdownlist>
+  <div>
+    {{ dropdownForm.controls.id.value }}
+  </div>
+</div>

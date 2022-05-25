@@ -1,0 +1,296 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Employee Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='employeeList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'
+                 rowHeight="25"
+                 [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='code' headerText='Code' isPrimaryKey='true'></e-column>
+                    <e-column field='employeeName' headerText='Name'></e-column>
+                    <e-column field='designation' headerText='Designation'></e-column>
+                    <!-- <e-column field='target' headerText='Target'></e-column>
+                    <e-column field='incentive' headerText='Incentive'></e-column>
+                    <e-column field='achievement' headerText='Achievement'></e-column>
+                    <e-column field='email' headerText='Email'></e-column>
+                    <e-column field='mobileNumber' headerText='Mobile Number'></e-column>
+                    <e-column headerText='Is Active'>
+                        <ng-template #template let-data>
+                            <div >
+                              <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isActive === true,
+                                'e-badge-no' : data.isActive === false
+                              }">
+                              {{data.isActive?'Yes':'No'}}
+                              </span>
+                           </div>
+                        </ng-template>
+
+                    </e-column>
+                    <e-column [width]="140" field='createdDate' headerText='Created Date'>
+                        <ng-template #template let-d>
+                            {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                        </ng-template>
+                    </e-column> -->
+                    <e-column headerText='Action' width="80" [commands]="syncfusionHelperService.commands" ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div class="text-center imgOuter">
+                    <img class="empImg" src="../../../../../assets/img/employee.jpg">
+                    <img class="uploadIcon" src="../../../../../assets/img/camera.png">
+                    </div>
+                    <div [formGroup]="employeeForm">
+                        <div class="d-flex flex-wrap">
+                            <div [ngClass]="{'form-label-group': employeeCode.value, 'form-group' : !employeeCode.value }" class="col-12">
+                                    <input type="text" class=" e-input  input-control" formControlName="employeeCode">
+                                    <label class="input-control-placeholder" for="employeeCode">Employee Code</label>
+                            </div>
+
+                            <div [ngClass]="{'form-label-group': code.value, 'form-group' : !code.value }" class="col-12">
+                                <input type="text" class=" e-input  input-control" formControlName="code">
+                                <label class="input-control-placeholder" for="employeeCode">Code</label>
+                        </div>
+
+
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': employeeName.invalid && (employeeName.dirty || employeeName.touched || submitClicked)}">
+
+                                    <input type="text" class=" e-input  input-control" formControlName="employeeName" id="employeeName" placeholder="employeeName">
+                                    <label class="input-control-placeholder" for="employeeName">Employee Name</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="employeeName.invalid && (employeeName.dirty || employeeName.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="employeeName.errors.required">
+                                            Employee Name is required.
+                                        </div>
+                                        <div *ngIf="employeeName.errors.maxlength">
+                                           Name cannot be more than 32 characters.
+                                        </div>
+                                        <div *ngIf="employeeName.errors.pattern">
+                                           Name should contain only alphabets.
+                                        </div>
+                                        <div *ngIf="employeeName.errors.duplicate">
+                                           Name already exists.
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-12"
+                                [ngClass]="{'e-error': designationId.invalid && (designationId.dirty || designationId.touched || submitClicked)}">
+                                <ejs-dropdownlist  class=" input-control" formControlName="designationId" [dataSource]='designationvalues' [allowFiltering]='true'
+                                    [fields]="{text: 'designation', value: 'id' }" floatLabelType='Auto' cssClass='e-filled' placeholder="Designation">
+                                </ejs-dropdownlist>
+                                  <!-- <label class="input-control-placeholder" for="designationId">Designation</label> -->
+                                  <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="designationId.invalid && (designationId.dirty || designationId.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="designationId.errors.required">
+                                            Designation is required.
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': target.invalid && (target.dirty || target.touched || submitClicked)}">
+                                    <input type="number" class=" e-input  input-control" formControlName="target" id="target" placeholder="target" onkeydown="return event.keyCode !== 69">
+                                    <label for="target" class="input-control-placeholder">Target</label>
+                                    <!-- <sup class="text-danger">*</sup> -->
+                                    <div *ngIf="target.invalid && (target.dirty || target.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="target.errors.required">
+                                            Target is required.
+                                        </div>
+                                    </div>
+                                    <div *ngIf="target.invalid && (target.dirty || target.touched || submitClicked)"
+                                    class="e-error d-block">
+                                      <div *ngIf="target.errors.max">
+                                          Maxlimit is 10.
+                                      </div>
+                                    </div>
+                            </div>
+                            <div class="form-label-group col-12"
+                             [ngClass]="{'e-error': incentive.invalid && (incentive.dirty || incentive.touched || submitClicked)}">
+                                    <input type="number" class=" e-input  input-control" formControlName="incentive" id="incentive" placeholder="incentive" onkeydown="return event.keyCode !== 69">
+                                    <label class="input-control-placeholder" for="incentive">Incentive</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="incentive.invalid && (incentive.dirty || incentive.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="incentive.errors.required">
+                                            Incentive is required.
+                                        </div>
+                                    </div>
+                                    <div *ngIf="incentive.invalid && (incentive.dirty || incentive.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="incentive.errors.max">
+                                          Maxlimit is 10.
+                                        </div>
+                                    </div>
+                            </div>
+                            <!-- <div class="form-label-group col-12"
+                             [ngClass]="{'e-error': achievement.invalid && (achievement.dirty || achievement.touched || submitClicked)}">
+                                    <input type="number" class=" e-input  input-control" formControlName="achievement" id="achievement" placeholder="achievement" onkeydown="return event.keyCode !== 69">
+                                    <label class="input-control-placeholder" for="achievement">Achievement</label>
+
+                                    <div *ngIf="achievement.invalid && (achievement.dirty || achievement.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="achievement.errors.required">
+                                            Achievement is required.
+                                        </div>
+                                    </div>
+                            </div> -->
+                            <div class="form-label-group col-12"
+                            [ngClass]="{'e-error': email.invalid && (email.dirty || email.touched || submitClicked)}">
+                                   <input type="text" class=" e-input  input-control" formControlName="email" id="email" placeholder="email">
+                                   <label class="input-control-placeholder" for="email">Email</label>
+                                   <!-- <sup class="text-danger">*</sup> -->
+                                   <div *ngIf="email.invalid && (email.dirty || email.touched || submitClicked)"
+                                       class="e-error d-block">
+                                       <div *ngIf="email.errors.required">
+                                        Email is required.
+                                       </div>
+                                   </div>
+                                   <div *ngIf="email.invalid && (email.dirty || email.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="email.errors.pattern">
+                                            Email is invalid.
+                                        </div>
+                                        <div *ngIf="email.errors.duplicate">
+                                          Email already exists.
+                                        </div>
+                                        <div *ngIf="email.errors.maxlength">
+                                            Email cannot be more than 64 characters.
+                                          </div>
+                                    </div>
+                           </div>
+                            <div class="form-group col-12"
+                             [ngClass]="{'e-error': mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched || submitClicked)}">
+
+
+                                    <ejs-maskedtextbox
+                                    mask="000 000000000"
+                                    [cssClass]="cssValue"
+                                    floatLabelType="Auto"
+                                    formControlName="mobileNumber"
+                                    placeholder="Mobile No."
+                                    (ngModelChange) = 'mobileDuplicate($event)'
+                                  ></ejs-maskedtextbox>
+
+                                    <div *ngIf="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="mobileNumber.errors.required">
+                                            Mobile No. is required.
+                                        </div>
+                                        <div *ngIf="mobileNumber.errors.duplicate">
+                                          Mobile No. already exists.
+                                        </div>
+
+                                    </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <div>
+                                    <label for="isActive">Is Active</label>
+
+                                </div>
+                                <div class="mt-4">
+
+                                    <span class="align-top mr-2 color-no">No</span>
+                                      <ejs-switch cssClass="bar-color" formControlName="isActive"></ejs-switch>
+                                    <span class="align-top ml-2 color-yes">Yes</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Employee Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Code :</div>
+                <div> {{employeeView?.code}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Name : </div>
+                <div class="w-50 text-truncate" title="{{employeeView?.employeeName}}"> {{employeeView?.employeeName}} </div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Designation :</div>
+                <div> {{employeeView?.designation}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Target : </div>
+                <div> {{employeeView?.target}} </div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Incentive :</div>
+                <div> {{employeeView?.incentive}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Email :</div>
+                <div class="w-50 text-truncate" title="{{employeeView?.email}}"> {{employeeView?.email}} </div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div>Mobile No. : </div>
+                <div> {{employeeView?.mobileNumber}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Is Active :</div>
+                <div> {{employeeView?.isActive?'Yes':'No'}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{employeeView?.createdDate}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

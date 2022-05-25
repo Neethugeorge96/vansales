@@ -1,0 +1,45 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Export
+    </h1>
+  </div>
+  <div class="subpageContent pt-5 pb-5">
+  
+    <form [formGroup]="exportForm">  
+      <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+        <div class="form-label-group col-4" [ngClass]="{'e-error': date.invalid && (date.dirty || date.touched || submitClicked)}">
+            <ejs-datepicker strictMode='false' formControlName="date"  cssClass='e-filled' format="dd/MM/yyyy" placeholder="Date" floatLabelType='Auto' (ngModelChange)="getRoutes($event)"></ejs-datepicker>
+            <div *ngIf="date.invalid && (date.dirty || date.touched || submitClicked)"
+              class="e-error d-block">
+              <div *ngIf="date.errors.required">
+                Date is required.
+              </div>
+
+            </div>
+       </div>
+
+       <div class="form-label-group col-4" [ngClass]="{'e-error': routeList.invalid && (routeList.dirty || routeList.touched || submitClicked)}">
+        <ejs-multiselect id='sample-list1' formControlName="routeList" [dataSource]='routeData' mode="CheckBox" [fields]="{text:'diplayText', value:'id'}"
+        placeholder="Route" floatLabelType='Auto'  cssClass='e-filled' [allowFiltering]="false"  (filtering)=" syncfusionHelperService.onFiltering(  $event,  routeData,  'routeNo', 'routeName')" [showSelectAll]='true' >
+            </ejs-multiselect>
+        <div *ngIf="routeList.invalid && (routeList.dirty || routeList.touched || submitClicked)"
+          class="e-error d-block">
+          <div *ngIf="routeList.errors.required">
+          Route is required.
+          </div>
+
+        </div>
+       </div>
+
+       <div class="button-right-wrapper col-4 ml-n4 pt-2">
+         <button type="button" class="btn btn-sm btn-color" (click)="saveData()">
+           Save
+         </button>
+         <button type="reset" class="btn btn-sm btn-color" (click)="resetData()">
+           Cancel
+         </button>
+       </div>
+   </div>
+      </form>
+      </div>

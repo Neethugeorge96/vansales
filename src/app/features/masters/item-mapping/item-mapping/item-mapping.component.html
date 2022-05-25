@@ -1,0 +1,139 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+      Item Mapping
+  </h1>
+</div>
+<div class="subpage-content">
+  <div class="card p-3">
+      <div>
+          <ejs-grid #grid [dataSource]='itemMappingList'
+              (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+              (actionComplete)='actionComplete($event)'
+              rowHeight="25"
+              [allowSorting]='true'
+              [allowPaging]='true'
+              [pageSettings]="syncfusionHelperService.initialPage"
+            [rowHeight]="syncfusionHelperService.height"
+              (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+              [toolbar]="syncfusionHelperService.toolbarExternal"
+              [editSettings]="syncfusionHelperService.editExternal"
+              (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+              (created)="syncfusionHelperService.created(grid)"
+              (load)="syncfusionHelperService.load(grid)"
+              [allowResizing]='true'>
+              <e-columns>
+                  <e-column headerText='S.No.' width='60'>
+                      <ng-template #template let-d>
+                          <div>{{ +d.index+1 }}</div>
+                      </ng-template>
+                  </e-column>
+                  <e-column field='mappingCode' headerText='Mapped Code' isPrimaryKey='true'></e-column>
+                  <e-column field='customerName' headerText='Customer Name' isPrimaryKey='true'></e-column>
+                  <e-column field='baseItemName' headerText='Base Item'></e-column>
+                  <e-column field='mappedItemName' headerText='Mapped Item'></e-column>
+                  <e-column headerText='Action' width="105" [commands]="syncfusionHelperService.commands" ></e-column>
+              </e-columns>
+              <ng-template #editSettingsTemplate let-data>
+                  <div [formGroup]="itemMappingForm">
+                      <div class="d-flex flex-wrap">
+                        <!-- [ngClass]="{'form-label-group': mappingCode.value, 'form-group' : !mappingCode.value }" -->
+
+
+                        <div [ngClass]="{'form-label-group': mappingCode.value, 'form-group' : !mappingCode.value }" class="col-12">
+                          <input type="text"  class="form-control e-input input-control" id="mappingCode" formControlName="mappingCode">
+                          <label class="input-control-placeholder" for="mappingCode">Mapped Code</label>
+
+                        </div>
+
+                          <div class="form-group col-12" [ngClass]="{'e-error': customerCode.invalid && (customerCode.dirty || customerCode.touched || submitClicked)}">
+                              <ejs-dropdownlist   formControlName="customerId"  [dataSource]='customerList' [fields]="{text: 'diplayText', value: 'id' }"  placeholder="Customer Name"
+                              floatLabelType='Auto' cssClass='e-filled' [allowFiltering]='true' (change)="onCustomerChange($event.itemData)" (filtering)=" syncfusionHelperService.onFiltering(  $event,  customerList,  'code', 'customerName')"></ejs-dropdownlist>
+                              <sup class="text-danger">*</sup>
+                                  <div *ngIf="customerCode.invalid && (customerCode.dirty || customerCode.touched || submitClicked)"
+                                  class="e-error d-block">
+                                    <div *ngIf="customerCode.errors.required">
+                                        Customer name is required.
+                                    </div>
+                                    <!-- <div *ngIf="customerBool">
+                                      Dupilcate Customer Name.
+                                  </div> -->
+                                  </div>
+                          </div>
+
+                          <div class="form-group col-12" [ngClass]="{'e-error': baseItem.invalid && (baseItem.dirty || baseItem.touched || submitClicked)}">
+                              <ejs-dropdownlist   formControlName="baseItemId"  [dataSource]='itemsList' [fields]="{text: 'diplayText', value: 'id' }"  placeholder="Base Item"
+                              floatLabelType='Auto' cssClass='e-filled' [allowFiltering]='true'  (change)="onBaseItemChange($event)" (filtering)=" syncfusionHelperService.onFiltering(  $event,  itemsList,  'code', 'itemName')"></ejs-dropdownlist>
+                              <sup class="text-danger">*</sup>
+                                <div *ngIf="baseItem.invalid && (baseItem.dirty || baseItem.touched || submitClicked)"
+                                class="e-error d-block">
+                                  <div *ngIf="baseItem.errors.required">
+                                      Base Item is required.
+                                  </div>
+                                </div>
+                          </div>
+
+                          <div class="form-group col-12" [ngClass]="{'e-error': mappedItem.invalid && (mappedItem.dirty || mappedItem.touched || submitClicked)}">
+
+                            <ejs-dropdownlist   formControlName="mappedItemId"  [dataSource]='mappedItemList' [fields]="{text: 'diplayText', value: 'id' }"  placeholder="Mapped Item"
+                            floatLabelType='Auto' cssClass='e-filled' [allowFiltering]='true'  (filtering)=" syncfusionHelperService.onFiltering(  $event,  mappedItemList,  'code', 'itemName')"></ejs-dropdownlist>
+                            <sup class="text-danger">*</sup>
+                                <div *ngIf="mappedItem.invalid && (mappedItem.dirty || mappedItem.touched || submitClicked)"
+                                class="e-error d-block">
+                                  <div *ngIf="mappedItem.errors.required">
+                                      Mapped Item is required.
+                                  </div>
+                                </div>
+                          </div>
+
+                      </div>
+                  </div>
+              </ng-template>
+          </ejs-grid>
+      </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+          Item Mapping Details
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">
+              ×
+          </span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Code :</div>
+              <div> {{itemMappingView?.mappingCode}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div>Customer Name : </div>
+              <div> {{itemMappingView?.customerName}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6 ">
+              <div>Base Item:</div>
+              <div> {{itemMappingView?.baseItemName}} </div>
+          </div>
+          <div class="view-item col-6 ">
+              <div class="d-flex">
+                  <div>Mapped Item:</div>
+                  <div> {{itemMappingView?.mappedItemName}} </div>
+              </div>
+          </div>
+      </div>
+
+
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+          Cancel
+      </button>
+  </div>
+</ng-template>

@@ -1,0 +1,130 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Net Bill   </h1>
+    <!-- <button class="btn btn-outline-primary btn-sm" routerLink="/masters/routemaster">Back<i class="fal fa-arrow-left ml-2"></i>
+    </button> -->
+</div>
+<div class="subpage-content">
+    <form [formGroup]="searchForm" autocomplete="off">
+        <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+            <div class="form-group col-5" [ngClass]="{'e-error': fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClickedMain)}">
+                <ejs-datepicker formControlName="fromDate" [max]="maxDate" (ngModelChange)="minDate = fromDate.value" format="dd/MM/yyyy"  id="fromDate" cssClass='e-filled' placeholder="From Date" floatLabelType='Auto'></ejs-datepicker>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClickedMain)"
+                    class="e-error d-block">
+                    <div *ngIf="fromDate.errors.required">
+                        From Date is required.
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-5">
+                <ejs-dropdownlist
+                formControlName="customerId"
+               [dataSource]='customerList'
+               (filtering)=" syncfusionHelperService.onFiltering(  $event,  customerList,  'code', 'customerName')"
+               [allowFiltering]="true"
+               [fields]="{text: 'diplayText', value: 'id' }"
+               placeholder="Customer Name"
+               floatLabelType='Auto'
+               (ngModelChange)="showCustomerClearBtn = customerId.value ? true : false;"
+               [showClearButton]="showCustomerClearBtn"
+               cssClass='e-static-clear e-filled'>
+           </ejs-dropdownlist>
+                    <!-- <input type="text" class="form-control e-input input-control" id="routeNumber"  placeholder="Route Number" formControlName="routeNumber">
+                    <label class="input-control-placeholder form-label" for="routeNumber">Route Number</label> -->
+            </div>
+            <div class="form-group col-5" [ngClass]="{'e-error': toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)}">
+                <ejs-datepicker formControlName="toDate" [min]="minDate" (ngModelChange)="maxDate = toDate.value"  id="toDate" cssClass='e-filled' format="dd/MM/yyyy" placeholder="To Date" floatLabelType='Auto'></ejs-datepicker>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)"
+                    class="e-error d-block">
+                    <div *ngIf="toDate.errors.required">
+                        To Date is required.
+                    </div>
+                    </div>
+            </div>
+            <div class="form-label-group col-5">
+                <ejs-dropdownlist
+                formControlName="paymentStatus"
+               [dataSource]='paymentStatusList'
+               [allowFiltering]="true"
+               (ngModelChange)="showPaymentClearBtn = paymentStatus.value ? true : false;"
+               [fields]="{text: 'text', value: 'value' }"
+               placeholder="Payment Status"
+               floatLabelType='Auto'
+               [showClearButton]="showPaymentClearBtn"
+               cssClass='e-static-clear e-filled'>
+           </ejs-dropdownlist>
+                <!-- <input type="text" class="form-control e-input input-control" id="vanNumber"  placeholder="Van Number" formControlName="vanNumber">
+                <label class="input-control-placeholder form-label" for="vanNumber">Van Number</label> -->
+            </div>
+
+        <div class="button-right-wrapper col-2 ml-n4 pt-2">
+            <button type="submit" class="btn btn-sm btn-color" (click)="searchData()">
+                Search
+              </button>
+              <button type="reset" class="btn btn-sm btn-color" (click)="resetSearch()">
+                Reset
+              </button>
+        </div>
+        </div>
+    </form>
+
+    <!--sales table section -->
+    <div class="card p-3" >
+        <ejs-grid #Grid gridLines="Both"  [allowResizing]='true' [dataSource]='netBillList'
+                    [allowSorting]='true'
+                    [allowPaging]='true'
+                    [pageSettings]="syncfusionHelperService.initialPage"
+                    [toolbar]="toolbarExternal"
+                    [rowHeight]="syncfusionHelperService.height"
+                    (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                    (created)="syncfusionHelperService.created(Grid)"
+                    (load)="syncfusionHelperService.load(Grid);">
+            <e-columns>
+                <e-column field='billNumber' headerText='Bill No.'  width="80"></e-column>
+                <e-column field='customerCode' headerText='Customer Code' width="200"></e-column>
+                <e-column field='customerName' headerText='Customer Name' width="200">
+                    <!-- <ng-template #template let-d>
+                        {{d.stockInDate | date: 'dd-MMM-yyyy'}}
+                    </ng-template> -->
+                </e-column>
+                <e-column field='salesInvoiceNo' headerText='Sales Invoice No.' width="170"></e-column>
+                <e-column field='returnInvoiceNo' headerText='Return Invoice No.'  width="170"></e-column>
+                <e-column field='salesAmount' headerText='Sales Amt'  width="110"></e-column>
+                <e-column field='returnAmount' headerText='Return Amt'  width="120">
+                    <!-- <ng-template #template let-d>
+                        {{d.salesDate | date: 'dd-MMM-yyyy'}}
+                    </ng-template> -->
+                </e-column>
+                <e-column field='netBillAmount' headerText='Net Bill Amt '  width="120">
+                    <!-- <ng-template #template let-d>
+                        <div>{{ saleTypes[d.saleTypeId] }}</div>
+                      </ng-template> -->
+                </e-column>
+                <e-column field='amountCollected' headerText='Amt Collected'  width="140"></e-column>
+                <e-column field='pendingAmount' headerText='Pending Amt'  width="130"></e-column>
+                <e-column field='routeNo' headerText='Route No.'  width="110"></e-column>
+                <e-column field='paymentMode' headerText='Payment Mode'  width="150"></e-column>
+                <e-column field='remarks' headerText='Remarks'  width="100"></e-column>
+                <e-column field='isfullyPaid' headerText='Is Fully Paid'  width="120">
+                    <ng-template #template let-data>
+                        <div >
+                          <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isfullyPaid,
+                            'e-badge-no' : !data.isfullyPaid
+                          }">
+                          {{data.isfullyPaid?'Yes':'No'}}
+                          </span>
+                       </div>
+                    </ng-template>
+                </e-column>
+                <e-column field='createdDate' headerText='Created Date'  width="140">
+                       <ng-template #template let-d>
+                        {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                    </ng-template>
+                </e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>
+

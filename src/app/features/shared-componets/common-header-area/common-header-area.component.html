@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-8">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1"
+            ><span class="fa fal fa-search form-control-feedback pt-1"></span
+          ></span>
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="searchParameter"
+          (input)="onSearchChange($event.target.value)"
+          name="searchroleName"
+          id="searchroleName"
+          class="form-control"
+          placeholder="{{ placeHolderText }}"
+        />
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="d-flex justify-content-end my-2">
+        <button
+          type="button"
+          class="btn btn-success"
+        >
+        <!-- routerLink="{{ routerLink }}" this should be added to the above button but getting error above 
+        please try to help -->
+          <i class="fa fal fa-plus fa-plus mr-1"></i>{{ buttonLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+  

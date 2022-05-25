@@ -1,0 +1,114 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Device Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='deviceList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'  rowHeight="25"
+                [allowPaging]='true'
+                [allowSorting]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='serialNumber' headerText='Serial No.' isPrimaryKey='true'></e-column>
+                    <e-column headerText='Is Active'>
+                        <ng-template #template let-data>
+                            <div >
+                              <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isActive,
+                                'e-badge-no' : !data.isActive
+                              }">
+                              {{data.isActive?'Yes':'No'}}
+                              </span>
+                           </div>
+                        </ng-template>
+                    </e-column>
+                    <e-column headerText='Action' width="60" [commands]="syncfusionHelperService.commands"></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="deviceForm">
+                        <div class="d-flex flex-wrap pt-5">
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': serialNumber.invalid && (serialNumber.dirty || serialNumber.touched || submitClicked)}">
+
+                                    <input type="text" class="form-control e-input input-control" id="serialNumber"  placeholder="serialNumber" formControlName="serialNumber">
+                                    <label class="input-control-placeholder" for="serialNumber">Serial No.</label>
+                                    <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="serialNumber.invalid && (serialNumber.dirty || serialNumber.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="serialNumber.errors.required">
+                                            Serial No. is required.
+                                        </div>
+                                        <div *ngIf="serialNumber.errors.maxlength">
+                                            Serial No. cannot be more than 36 characters.
+                                        </div>
+                                        <div *ngIf="serialNumber.errors.duplicate">
+                                            Serial No. already exists.
+                                       </div>
+
+                                        <div *ngIf="serialNumber.errors.pattern">
+                                          Serial No. cannot be Zero.
+                                          </div>
+                                    </div>
+                            </div>
+                            <div class="form-group col-6 ml-n6">
+                                <div>
+                                    <ejs-checkbox  formControlName="isActive"></ejs-checkbox>
+                                </div>
+                                <div>
+                                    <label for="isActive">Is Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Device Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item row col-8">
+                <div>Serial No. :</div>
+                <div class="ml-2">{{deviceView?.serialNumber}}</div>
+            </div>
+            <div class="view-item col-4">
+                <div>Is Active : </div>
+                <div> {{deviceView?.isActive ? 'Yes' : 'No'}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="15.413" height="14.76" viewBox="0 0 15.413 14.76">
+  <g id="Group_521" data-name="Group 521" transform="translate(-1328 3356.75)">
+    <g id="Group_520" data-name="Group 520" transform="translate(1328 -3353.293)">
+      <g id="laptop" transform="translate(0 0)">
+        <path id="Path_282" data-name="Path 282" d="M15.963,14.873a.771.771,0,0,0,.771-.771V6.4a.771.771,0,0,0-.771-.771H4.146a.771.771,0,0,0-.771.771V14.1a.771.771,0,0,0,.771.771ZM4.4,6.653h11.3v7.193H4.4Z" transform="translate(-2.347 -5.625)" fill="#fff"/>
+        <path id="Path_283" data-name="Path 283" d="M1.125,28.125H16.538v1.028H1.125Z" transform="translate(-1.125 -17.85)" fill="#fff"/>
+      </g>
+      <rect id="Rectangle_914" data-name="Rectangle 914" width="11.303" height="7.193" transform="translate(2.055 1.028)" fill="#1e4567" opacity="0.91"/>
+    </g>
+    <path id="invoice" d="M7.212,8.3l-.554.554L6.105,8.3l-.554.554L5,8.3l-.554.554L3.891,8.3l-.554.554L2.783,8.3l-.554.554L1.676,8.3l-.554.554L.569,8.3l-.554.554V.554A.532.532,0,0,1,.179.164.532.532,0,0,1,.569,0H7.212A.532.532,0,0,1,7.6.164a.532.532,0,0,1,.164.389v8.3ZM1.4,7.2H3.06a.277.277,0,0,0,0-.554H1.4a.277.277,0,0,0,0,.554ZM5,4.983H6.105v.554H5ZM5,3.876H6.105v.554H5ZM5,2.768H6.105v.554H5ZM5,1.661H6.105v.554H5ZM1.676,3.876H4.444v.554H1.676Zm0-1.107H4.444v.554H1.676Zm0-1.107H4.444v.554H1.676Z" transform="translate(1331.816 -3356.5)" fill="rgba(200,213,231,0.64)" stroke="#fff" stroke-width="0.5"/>
+  </g>
+</svg>

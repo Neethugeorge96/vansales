@@ -1,0 +1,14 @@
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item" *ngFor="let rows of itemDetails">
+      <div class="row">
+        <div [ngClass]="[isSingleLayer ? 'col-md-12' : '',  isTwoLayer ? 'col-md-6' : '', isThreeLayer ? 'col-md-4' : '', (!isSingleLayer && !isTwoLayer && !isThreeLayer ? 'col-md-6' : '')]" *ngFor="let item of rows | keyvalue">
+          <div class="li-class view-container">
+            <label [ngClass]="[isSingleLayer ? 'col-md-3' : '',  isTwoLayer ? 'col-md-6' : '', isThreeLayer ? 'col-md-6' : '', (!isSingleLayer && !isTwoLayer && !isThreeLayer ? 'col-md-6' : '')]"  style="font-weight: 600;">{{ item.key |
+              columnHeaderPipe }}</label>
+            <label style="display: inline;">: {{ item.value }}</label>
+          </div>
+        </div>
+      </div>
+      <!-- <br><br> -->
+    </li>
+  </ul>

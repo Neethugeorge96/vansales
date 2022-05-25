@@ -1,0 +1,132 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Reason Code Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='reasonList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'  rowHeight="25"
+                [allowPaging]='true'
+                [allowSorting]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='reasonCode' headerText='Reason Code' isPrimaryKey='true'></e-column>
+                    <e-column field='description' headerText='Description'></e-column>
+                    <e-column headerText='Stock Movement Type'>
+                        <ng-template #template let-data>
+                            <div>
+                                {{stockMovementTypeName(data.stockMovementTypeId) }}
+                            </div>
+                        </ng-template>
+                    </e-column>
+                    <!-- <e-column field='createdDate' headerText='Created Date'>
+                        <ng-template #template let-d>
+                            {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                        </ng-template>
+                    </e-column> -->
+                    <e-column headerText='Action' width="80" [commands]="syncfusionHelperService.commands"></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="reasonForm">
+                        <div class="d-flex flex-wrap">
+                            <div [ngClass]="{'form-label-group': reasonCode.value, 'form-group' : !reasonCode.value }" class="col-12">
+                                    <input type="text"  class="form-control e-input input-control" id="reasonCode"  formControlName="reasonCode">
+                                    <label class="input-control-placeholder" for="reasonCode">Reason Code</label>
+                                    <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': description.invalid && (description.dirty || description.touched || submitClicked)}">
+
+                                    <input type="text" class="form-control e-input input-control" id="description"  placeholder="Description" formControlName="description">
+                                    <label class="input-control-placeholder" for="description">Description</label>
+                                    <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="description.invalid && (description.dirty || description.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="description.errors.required">
+                                          Description is required.
+                                        </div>
+                                        <div *ngIf="description.errors.maxlength">
+                                            Description cannot be more than 126 characters.
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="form-group col-12"
+                                [ngClass]="{'e-error': stockMovementTypeId.invalid && (stockMovementTypeId.dirty || stockMovementTypeId.touched || submitClicked)}">
+
+                                    <ejs-dropdownlist class="input-control" formControlName="stockMovementTypeId"  [dataSource]='stockMovementTypeList'
+                                        [fields]="{text: 'text', value: 'value' }" placeholder="Stock Movement Type"  floatLabelType='Auto' cssClass='e-filled'>
+                                    </ejs-dropdownlist>
+                                    <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="stockMovementTypeId.invalid && (stockMovementTypeId.dirty || stockMovementTypeId.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="stockMovementTypeId.errors.required">
+                                            Stock Movement Type is required.
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Reason Code Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Code :</div>
+                <div> {{reasonView?.reasonCode}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Description : </div>
+                <div class="w-50 text-truncate" title="{{reasonView?.description}}"> {{reasonView?.description}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div>Stock Movement Type:</div>
+                <div> {{stockMovementTypeName(reasonView?.stockMovementTypeId)}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{reasonView?.createdDate | date: 'dd-MMM-yyyy'}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

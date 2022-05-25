@@ -1,0 +1,253 @@
+<div class="subheader" *ngIf="!showExcelValidation">
+  <h1 class="subheader-title">
+    {{viewMode ? 'View Customer Discount Details' : customerDiscountId ? 'Edit Customer Discount Details' : 'Create
+    Customer Discount Details'}}
+  </h1>
+  <button class="btn btn-outline-primary btn-sm" routerLink="/masters/customerDiscount">Back<i
+      class="fal fa-arrow-left ml-2"></i>
+  </button>
+</div>
+
+<div class="subpage-content" *ngIf="!showExcelValidation">
+
+  <form [formGroup]="customerDiscountHeaderfrm" >
+    <div class="d-flex flex-wrap align-items-start pt-3 col-md-12">
+
+          <div [ngClass]="{'form-label-group': customerDiscountCode.value, 'form-group' : !customerDiscountCode.value }" class="col-4 pl-1 pr-1" >
+            <input type="text"  class="form-control e-input input-control" id="customerDiscountCode" formControlName="discountCode">
+            <label class="input-control-placeholder" for="customerDiscountCode">Discount Code</label>
+
+          </div>
+          <div class="form-label-group col-4 pl-1 pr-1"   [ngClass]="{'e-error': customerId.invalid && (customerId.dirty || customerId.touched || submitClicked)}">
+                <ejs-dropdownlist class=" input-control" (ngModelChange)="getallCustomerItems()" formControlName="customerId"
+                  [allowFiltering]='true'  [dataSource]='customerList' [fields]="{text: 'diplayText', value: 'id' }" floatLabelType='Auto' cssClass='e-filled'
+                  placeholder="Customer" [popupWidth]='550'  (filtering)=" syncfusionHelperService.onFiltering(  $event,  customerList,  'code', 'customerName')"
+                  >
+                </ejs-dropdownlist>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="customerId.invalid && (customerId.dirty || customerId.touched || submitClicked)"
+                  class="e-error d-block">
+                  <div *ngIf="customerId.errors?.required">
+                    Customer is required.
+                  </div>
+                  <div *ngIf="customerId.errors?.duplicate">
+                    Customer already exists.
+                  </div>
+                </div>
+          </div>
+
+          <div class="form-label-group col-4 pl-1 pr-1"
+          [ngClass]="{'e-error': discountpercent.invalid && (discountpercent.dirty || discountpercent.touched || submitClicked)}">
+          <input type="number" class="form-control e-input input-control" id="discountpercent" placeholder="Discount Percent"
+            formControlName="discountPercentage" (ngModelChange)="calculateDiscountPrice(); updateTableDiscounts()">
+          <label class="input-control-placeholder" for="discountpercent">Discount %</label>
+          <sup class="text-danger">*</sup>
+          <div *ngIf="discountpercent.invalid && (discountpercent.dirty || discountpercent.touched || submitClicked)"
+            class="e-error d-block">
+            <div *ngIf="discountpercent.errors.required">
+              Discount % is required.
+            </div>
+            <div *ngIf="discountpercent.errors.min">
+              Discount % can't be 0.
+            </div>
+            <div *ngIf="discountpercent.errors.max">
+              Discount % can't be greater than 100.
+            </div>
+
+          </div>
+        </div>
+
+    </div>
+    <div class="d-flex flex-wrap align-items-start  col-md-12">
+
+      <div class="d-flex flex-wrap align-items-start mr-5">
+        <div>
+          <label for="isItemWiseDiscount">Item Wise Discount</label>
+        </div>
+        <span class="align-top ml-2 mr-2 color-no">No</span>
+          <ejs-switch cssClass="bar-color" formControlName="isItemWiseDiscount" (ngModelChange)="itemPriceDiscountList = []" [disabled]="!customerId.value || viewMode"></ejs-switch>
+        <span class="align-top ml-2 color-yes">Yes</span>
+  </div>
+
+        <div class="form-label-group ml-5 col-4">
+          <div class="mt-2">
+              <ejs-checkbox  formControlName="isActive" label="Is Active"></ejs-checkbox>
+          </div>
+        </div>
+
+
+    </div>
+
+    <div class="button-right-wrapper" *ngIf="!viewMode && !isItemDiscount.value">
+
+      <button type="button" routerLink="/masters/customerDiscount" class="btn  btn-sm e-btn  m-0 mr-2" >Cancel</button>
+      <button type="button" class="btn  btn-sm e-btn e-primary mr-3" data-ripple="true"  (click)="saveData()">Save</button>
+
+    </div>
+
+
+  </form>
+
+  <div class="card p-3" *ngIf="isItemDiscount.value">
+    <ejs-grid #grid [dataSource]='itemPriceDiscountList'[searchSettings]='searchOptions' [editSettings]='syncfusionHelperService.editInline' rowHeight ="25"
+      [toolbar]='toolbarInline' (toolbarClick)='clickHandler($event)'  (actionBegin)='actionBegin($event)' (rowSelected)='rowSelected($event)'
+      (created)="syncfusionHelperService.created(grid); setToolbar();" (load)="syncfusionHelperService.inlineGridLoad(grid)" gridLines='Both'>
+      <e-columns>
+        <e-column headerText='S.No.' width='80' isPrimaryKey="true" field="id">
+          <ng-template #template let-d>
+            <div>{{ +d.index+1 }}</div>
+          </ng-template>
+        </e-column>
+        <e-column field='itemName' headerText='Item Code/Name'>
+          <ng-template #template let-d>
+            <span>
+              <span>{{d.itemCode}} -
+                <span class="fs-sm">
+                  {{d.itemName}}
+                </span>
+              </span>
+            </span>
+          </ng-template>
+        </e-column>
+        <e-column field='uomName' headerText='UOM'></e-column>
+        <e-column field='price' headerText='Price'> </e-column>
+        <e-column field='operator' headerText='Operator'> </e-column>
+        <e-column field='discountPercentage' headerText='Discount %'></e-column>
+        <e-column field='priceAfterDiscount' headerText='Price After Discount'> </e-column>
+      </e-columns>
+      <ng-template #editSettingsTemplate let-data>
+        <div [formGroup]="itemDiscountForm">
+          <table class="e-table e-inline-edit" cellspacing="0.25">
+            <colgroup>
+              <col width='55'>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td width='55'></td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)}">
+
+                      <ejs-dropdownlist name="itemName" [allowFiltering]='true' placeholder="Item Code/ Name"
+                        formControlName="itemName" popupHeight='240px' [dataSource]='itemsList'
+                        [fields]="{text: 'itemName', value: 'itemName' }" (change)="setUomandPrice($event)" (ngModelChange)=" calculateDiscountPrice();">
+                        <ng-template #itemTemplate="" let-data="">
+                          <span>
+                            <span>{{data.itemCode}} -
+                              <span class="fs-sm">
+                                {{data.itemName}}</span>
+                            </span>
+                          </span>
+                        </ng-template>
+                      </ejs-dropdownlist>
+                      <div *ngIf="itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="itemName.errors.required">
+                          Item is required.
+                        </div>
+
+                      </div>
+
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="uomName"
+                      placeholder="UOM" formControlName="uomName" disabled>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="price" placeholder="Price"
+                        formControlName="price" disabled>
+                      <!-- <div *ngIf="price.invalid && (price.dirty || price.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="price.errors.required">
+                          Price is required.
+                        </div>
+                        <div *ngIf="price.errors.max">
+                          Price cannot be more than 10 digits.
+                        </div>
+                        <div *ngIf="price.errors.min">
+                          Price cannot be Zero.
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                  [ngClass]="{'e-error': operator.invalid && (operator.dirty || operator.touched || submitClicked)}">
+
+                    <ejs-dropdownlist name="operator" [allowFiltering]='true' placeholder="Operator"
+                      formControlName="operator" popupHeight='240px' [dataSource]='operators'
+                      [fields]="{text: 'operator', value: 'operator' }" (ngModelChange)="calculateDiscountPrice()">
+                    </ejs-dropdownlist>
+                    <div *ngIf="operator.invalid && (operator.dirty || operator.touched || submitClicked)"
+                      class="e-error d-block">
+                      <div *ngIf="operator.errors.required">
+                        Operator is required.
+                      </div>
+
+                    </div>
+
+                </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': discountItemPercent.invalid && (discountItemPercent.dirty || discountItemPercent.touched || submitClicked)}">
+                    <div>
+                      <input type="number" class="form-control e-input input-control" id="discountItemPercent" placeholder="Discount %"
+                        formControlName="discountPercentage" (ngModelChange)="calculateDiscountPrice()" onkeydown="return event.keyCode !== 69">
+                      <div *ngIf="discountItemPercent.invalid && (discountItemPercent.dirty || discountItemPercent.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="discountItemPercent.errors.required">
+                          Discount Item % is required.
+                        </div>
+                        <div *ngIf="discountItemPercent.errors.max && operator.value == 'Add'">
+                          Tot.Dis can't be greater than 100.
+                        </div>
+                        <div *ngIf="discountItemPercent.errors.max && operator.value == 'Subtract'">
+                          Tot.Dis should be greater than 0.
+                        </div>
+                        <div *ngIf="discountItemPercent.errors.min">
+                          Discount Item % cannot be Zero.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="priceAfterDiscount" placeholder="Price After Discount"
+                        formControlName="priceAfterDiscount" disabled>
+
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </ejs-grid>
+    <div class="button-right-wrapper my-3" *ngIf="!viewMode">
+
+      <button type="button" routerLink="/masters/customerDiscount" class="btn  btn-sm e-btn  m-0 mr-2" >Cancel</button>
+      <button type="button" class="btn  btn-sm e-btn e-primary m-0" data-ripple="true"  (click)="saveData()">Save</button>
+
+    </div>
+  </div>
+
+
+</div>
+
+<app-file-uploader [uniqKey]="'Item Code'" [showDialog]="showDialog" (closeEvent)="receiveParams($event)" (uploadEvent)="uploadFileData($event)"></app-file-uploader>
+<app-validate-excel *ngIf="showExcelValidation" [data]="excelData" [gridFields]="gridFields" (closeEvent)="updateExcelData($event)"></app-validate-excel>

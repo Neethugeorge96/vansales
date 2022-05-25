@@ -1,0 +1,82 @@
+<div class="subheader" >
+    <h1 class="subheader-title">
+        Import Items
+    </h1>
+    <button class="btn btn-outline-primary btn-sm" routerLink="/masters/itemmaster">Back<i class="fal fa-arrow-left ml-2"></i>
+    </button>
+</div>
+<div class="subpage-content">
+    <form [formGroup]="importHeaderForm">
+        <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-10">
+            <div class="form-label-group col-4" [ngClass]="{'e-error': name.invalid && (name.dirty || name.touched || submitClickedMain)}">
+
+                <ejs-dropdownlist
+                placeholder="Name"  formControlName="name"  [dataSource]="names"   (change)="nameChange($event)" [allowFiltering]="true"
+                [fields]="{ text: 'name', value: 'id' }"  floatLabelType='Auto' cssClass='e-filled' >
+              </ejs-dropdownlist>
+                    <sup class="text-danger">*</sup>
+                    <div *ngIf="name.invalid && (name.dirty || name.touched || submitClickedMain)"
+                        class="e-error d-block">
+                        <div *ngIf="name.errors.required">
+                            Name is required.
+                        </div>
+                    </div>
+
+            </div>
+            <div class="form-label-group col-4"
+            [ngClass]="{'form-label-group': company.value, 'form-group' : !company.value }">
+
+                    <input type="text" class="form-control e-input input-control" id="company" formControlName="company">
+                    <label class="input-control-placeholder" for="company">Company</label>
+
+            </div>
+
+            <div class="button-right-wrapper col-2 pt-2">
+                <button type="submit" class="btn btn-sm btn-color" (click)="importData()">
+                    Import 
+                  </button>
+                  <button type="reset" class="btn btn-sm btn-color" (click)="resetImport()">
+                    Reset
+                  </button>
+            </div>
+
+        </div>
+    </form>
+
+
+
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='itemsList' gridLines='Both'
+                 rowHeight="25"
+                [allowSorting]='true'
+                [allowPaging]='true'
+                [selectionSettings]="selectOptions"
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                [toolbar]="toolbarExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+
+                <e-columns>
+                    <e-column type="checkbox" width='60'headerText='Select All'>
+                    </e-column>
+                    <e-column field='partNum' headerText='Code' isPrimaryKey='true'></e-column>
+                    <e-column field='partDescription' headerText='Name'></e-column>
+                    <e-column field='ium' headerText='UOM'></e-column>
+
+                    <e-column field='sequenceNumber' headerText='Sequence No.'></e-column>
+                    <e-column field='vatPercentage' headerText='Vat %'></e-column>
+                </e-columns>
+                </ejs-grid>
+
+                <div class="button-right-wrapper my-3" >
+                    <button routerLink="/masters/itemmaster" ejs-button>Cancel</button>
+                    <button ejs-button [isPrimary]="true" (click)="saveData()">Save</button>
+        
+                </div>
+                </div>
+                </div>
+    </div>

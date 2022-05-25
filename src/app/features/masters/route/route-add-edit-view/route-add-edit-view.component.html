@@ -1,0 +1,154 @@
+<div class="subheader" *ngIf="!showExcelValidation">
+    <h1 class="subheader-title">
+        {{viewMode ? 'View Route Details' : activatedRoute.snapshot.params.id ? 'Edit Route Details' : 'Create Route Details'}}
+    </h1>
+    <button class="btn btn-outline-primary btn-sm" routerLink="/masters/routemaster">Back<i class="fal fa-arrow-left ml-2"></i>
+    </button>
+</div>
+<div class="subpage-content" *ngIf="!showExcelValidation">
+    <form [formGroup]="routeHeaderForm">
+        <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-10">
+            <div class="form-label-group col-4" [ngClass]="{'e-error': routeNo.invalid && (routeNo.dirty || routeNo.touched || submitClickedMain)}">
+
+
+                    <input type="text" class="form-control e-input input-control" id="routeNo" (change) = "setDuplicate($event.target.value)" placeholder="Route No" formControlName="routeNo">
+                    <label class="input-control-placeholder" for="routeNo">Route No.</label>
+                    <sup class="text-danger">*</sup>
+                    <div *ngIf="routeNo.invalid && (routeNo.dirty || routeNo.touched || submitClickedMain)"
+                        class="e-error d-block">
+                        <div *ngIf="routeNo.errors.required">
+                            Route No. is required.
+                        </div>
+                        <div *ngIf="routeNo.errors.duplicate">
+                            Route No. already exists.
+                       </div>
+                        <div *ngIf="routeNo.errors.maxlength">
+                            Route No. can't be more than 6 characters.
+                        </div>
+                        <div *ngIf="routeNo.errors.pattern">
+                            Route No. can't be zero.
+                        </div>
+                    </div>
+
+            </div>
+            <div class="form-label-group col-4"
+                [ngClass]="{'e-error': routeName.invalid && (routeName.dirty || routeName.touched || submitClickedMain)}">
+
+                    <input type="text" class="form-control e-input input-control" id="routeName"  placeholder="Route Name" formControlName="routeName">
+                    <label class="input-control-placeholder" for="routeName">Route Name</label>
+                    <sup class="text-danger">*</sup>
+                    <div *ngIf="routeName.invalid && (routeName.dirty || routeName.touched || submitClickedMain)"
+                        class="e-error d-block">
+                        <div *ngIf="routeName.errors.required">
+                            Route Name is required.
+                        </div>
+                    </div>
+
+            </div>
+            <div class="form-group col-4"
+                [ngClass]="{'e-error': branchId.invalid && (branchId.dirty || branchId.touched || submitClickedMain)}">
+
+                    <ejs-dropdownlist  [dataSource]='branchList' popupHeight='150px'
+                        formControlName="branchId" [fields]="{text: 'branchName', value: 'id' }" [allowFiltering]='true' placeholder="Branch"
+                        floatLabelType='Auto' cssClass='e-filled'>
+                    </ejs-dropdownlist>
+                    <sup class="text-danger">*</sup>
+                    <div *ngIf="branchId.invalid && (branchId.dirty || branchId.touched || submitClickedMain)"
+                    class="e-error d-block">
+                    <div *ngIf="branchId.errors.required">
+                        Branch is required.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-label-group col-4" *ngIf="viewMode">
+                <!-- <ejs-datepicker formControlName="createdDate" cssClass="e-filled" placeholder="Created Date" floatLabelType="Auto">
+                </ejs-datepicker> -->
+                <input type="text" class="form-control e-input input-control" formControlName="createdDate" placeholder="created date" id="createddate">
+                <label class="input-control-placeholder" for="createddate">Created Date</label>
+        </div>
+
+            <div class="form-group col-8">
+                <div>
+                    <ejs-checkbox  formControlName="isActive"></ejs-checkbox>
+                </div>
+                <div class="ml-2">
+                    <label>Is Active</label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="card p-3">
+        <ejs-grid #grid [dataSource]='selectedCustomers'
+                (actionBegin)='actionBegin($event)'  (actionComplete)='actionComplete($event)' gridLines='Both' rowHeight="25"
+                [allowPaging]='false'
+                [allowSorting]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="toolbarExternal"
+                (toolbarClick)='clickHandler($event)'
+                [editSettings]="editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid); setToolbar()"
+                (load)="syncfusionHelperService.load(grid)">
+                <e-columns>
+                    <e-column headerText='S.No.' width='80'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='code' headerText='Code' isPrimaryKey='true'></e-column>
+                    <e-column field='customerName' headerText='Customer'></e-column>
+                    <e-column field='locationName' headerText='Location'></e-column>
+                    <e-column headerText='Sequence No.' field='sequenceNo' width="180px">
+                        <ng-template #template let-data>
+                            <div >
+
+                  <input type="number" [disabled]="viewMode" class="e-input w-50 h-auto"   [(ngModel)]="data.sequenceNo" (ngModelChange)="onChangeseqno(data, data.sequenceNo)">
+                           </div>
+                        </ng-template>
+                    </e-column>
+                    <e-column *ngIf="!viewMode" width="100" headerText='Action' [commands]="commands"></e-column>
+                </e-columns>
+
+                <ng-template #editSettingsTemplate let-data>
+                            <div class="customer-search-outer">
+                                    <div class="d-flex flex-wrap align-items-start pt-3 col-md-12">
+                                        <div class="form-group col-12">
+                                            <input type="text" autocomplete="off" class=" e-input" name="searchele" [(ngModel)]="searchKey" placeholder="Search Customer" (ngModelChange)="filterCustomers()">
+                                        </div>
+                                        </div>
+                                    </div>
+                                        <div class=" mt-4 p-2 row customer-list" *ngFor="let customer of searchResults">
+                                            <div class="col-3">
+                                                <ejs-checkbox   [(ngModel)]='customer.selected'></ejs-checkbox>
+                                            </div>
+                                            <div class="col-9">
+                                                <label >{{customer.code}} / {{customer.customerName}} / {{customer.location}}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class=" mt-4 p-2 row customer-list" *ngIf="!searchResults.length">
+                                            <div class="col-3">
+                                                <!-- <ejs-checkbox   [(ngModel)]='customer.selected'></ejs-checkbox> -->
+                                            </div>
+                                            <div class="col-9">
+                                                <label >No Results Found!</label>
+                                            </div>
+                                        </div>
+                            </ng-template>
+            </ejs-grid>
+        <div class="button-right-wrapper my-3" *ngIf="!viewMode">
+            <button routerLink="/masters/routemaster" ejs-button>Cancel</button>
+            <button ejs-button [isPrimary]="true" (click)="clearSearch()">Save</button>
+
+        </div>
+    </div>
+
+</div>
+
+<app-file-uploader [uniqKey]="'Customer Code'" [showDialog]="showDialog" (closeEvent)="receiveParams($event)" (uploadEvent)="uploadFileData($event)"></app-file-uploader>
+<app-validate-excel *ngIf="showExcelValidation" [data]="excelData" [gridFields]="gridFields" (closeEvent)="updateExcelData($event)"></app-validate-excel>
+

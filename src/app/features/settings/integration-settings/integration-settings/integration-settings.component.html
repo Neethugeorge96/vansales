@@ -1,0 +1,227 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+      Integration Details
+  </h1>
+</div>
+<div class="subpage-content">
+  <div class="card p-3">
+      <div>
+          <ejs-grid #grid [dataSource]='integrationList'
+              (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+              (actionComplete)='actionComplete($event)'  rowHeight="25"
+              [allowPaging]='true'
+              [allowSorting]='true'
+              [pageSettings]="syncfusionHelperService.initialPage"
+            [rowHeight]="syncfusionHelperService.height"
+              (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+              [toolbar]="syncfusionHelperService.toolbarExternal"
+              [editSettings]="syncfusionHelperService.editExternal"
+              (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+              (created)="syncfusionHelperService.created(grid)"
+              (load)="syncfusionHelperService.load(grid)"
+              [allowResizing]='true'>
+              <e-columns>
+                  <e-column headerText='S.No.' width='40'>
+                      <ng-template #template let-d>
+                          <div>{{ +d.index+1 }}</div>
+                      </ng-template>
+                  </e-column>
+                  <e-column field='name' headerText='Name' width="60"></e-column>
+                  <e-column field='url' headerText='URL' isPrimaryKey='true'></e-column>
+                  <e-column field='version' headerText='Version' width="50" ></e-column>
+                  <e-column field='companyId' headerText='Company Id' width="70"></e-column>
+                  <e-column field='xapiKey' headerText='XAPI Key' ></e-column>
+
+
+                  <e-column headerText='Action' width="100" [commands]="syncfusionHelperService.commands"></e-column>
+              </e-columns>
+              <ng-template #editSettingsTemplate let-data>
+                  <div [formGroup]="integrationForm">
+                      <div class="d-flex flex-wrap pt-5">
+
+                        <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': name.invalid && (name.dirty || name.touched || submitClicked)}">
+
+                                  <input type="text" class="form-control e-input input-control" id="name"  placeholder="name" formControlName="name">
+                                  <label class="input-control-placeholder" for="name">Name</label>
+                                  <sup class="text-danger">*</sup>
+
+                                  <div *ngIf="name.invalid && (name.dirty || name.touched || submitClicked)"
+                                      class="e-error d-block">
+                                      <div *ngIf="name.errors.required">
+                                         Name is required.
+                                      </div>
+                                      <div *ngIf="name.errors.duplicate">
+                                         Name already exists.
+                                     </div>
+                                  </div>
+                          </div>
+
+                          <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': url.invalid && (url.dirty || url.touched || submitClicked)}">
+
+                                  <input type="text" class="form-control e-input input-control" id="url"  placeholder="url" formControlName="url">
+                                  <label class="input-control-placeholder" for="url">URL</label>
+                                  <sup class="text-danger">*</sup>
+
+                                  <div *ngIf="url.invalid && (url.dirty || url.touched || submitClicked)"
+                                      class="e-error d-block">
+                                      <div *ngIf="url.errors.required">
+                                         URL is required.
+                                      </div>
+                                      <div *ngIf="url.errors.maxlength">
+                                         URL cannot be more than 36 characters.
+                                      </div>
+                                      <div *ngIf="url.errors.duplicate">
+                                         URL already exists.
+                                     </div>
+
+                                      <div *ngIf="url.errors.pattern">
+                                       URL cannot be Zero.
+                                        </div>
+                                  </div>
+                          </div>
+
+
+
+                          <div class="form-group col-12" [ngClass]="{  'e-error':  version.invalid &&  (version.dirty || version.touched || submitClicked) }"  >
+                            <ejs-dropdownlist
+                              placeholder="Version"  formControlName="version"  [dataSource]="versions"   (change)="versionChange($event)" [allowFiltering]="true"
+                              [fields]="{ text: 'version', value: 'version' }"  floatLabelType='Auto' cssClass='e-filled' >
+                            </ejs-dropdownlist>
+
+                              <sup class="text-danger">*</sup>
+                                  <div  *ngIf="  version.invalid &&  (version.dirty || version.touched || submitClicked) " class="e-error d-block">
+                                    <div *ngIf="version.errors.required">
+                                      Version is required.
+                                    </div>
+                                  </div>
+                          </div>
+                          <!-- <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': version.invalid && (version.dirty || version.touched || submitClicked)}">
+
+                                  <input type="text" class="form-control e-input input-control" id="version"  placeholder="version" formControlName="version">
+                                  <label class="input-control-placeholder" for="version">Version</label>
+                                  <sup class="text-danger">*</sup>
+
+                                  <div *ngIf="version.invalid && (version.dirty || version.touched || submitClicked)"
+                                      class="e-error d-block">
+                                      <div *ngIf="version.errors.required">
+                                         Version is required.
+                                      </div>
+                                      <div *ngIf="version.errors.maxlength">
+                                         Version cannot be more than 36 characters.
+                                      </div>
+                                      <div *ngIf="version.errors.duplicate">
+                                         Version already exists.
+                                     </div>
+
+
+                                  </div>
+                          </div> -->
+
+                          <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': companyId.invalid && (companyId.dirty || companyId.touched || submitClicked)}">
+
+                                  <input type="text" class="form-control e-input input-control" id="companyId"  placeholder="companyId" formControlName="companyId">
+                                  <label class="input-control-placeholder" for="companyId">Company</label>
+                                  <sup class="text-danger">*</sup>
+
+                                  <div *ngIf="companyId.invalid && (companyId.dirty || companyId.touched || submitClicked)"
+                                      class="e-error d-block">
+                                      <div *ngIf="companyId.errors.required">
+                                        Company is required.
+                                      </div>
+                                      <div *ngIf="companyId.errors.maxlength">
+                                        Company cannot be more than 36 characters.
+                                      </div>
+                                      <div *ngIf="companyId.errors.duplicate">
+                                        Company already exists.
+                                     </div>
+
+
+                                  </div>
+                          </div>
+
+                          <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': xapiKey.invalid && (xapiKey.dirty || xapiKey.touched || submitClicked)}">
+
+                                  <input type="text" class="form-control e-input input-control" id="xapiKey"  placeholder="xapiKey" formControlName="xapiKey">
+                                  <label class="input-control-placeholder" for="xapiKey">XAPI Key</label>
+                                  <sup *ngIf="version.value == 'V2'" class="text-danger">*</sup>
+
+                                  <div *ngIf="xapiKey.invalid && (xapiKey.dirty || xapiKey.touched || submitClicked) "
+                                      class="e-error d-block">
+                                      <div *ngIf="xapiKey.errors.required">
+                                         xapiKey is required.
+                                      </div>
+
+                                      <div *ngIf="xapiKey.errors.duplicate">
+                                         xapiKey already exists.
+                                     </div>
+
+
+                                  </div>
+                          </div>
+
+
+                      </div>
+                  </div>
+              </ng-template>
+          </ejs-grid>
+      </div>
+  </div>
+</div>
+
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+          Integration Details
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">
+              ×
+          </span>
+      </button>
+  </div>
+  <div class="modal-body">
+
+      <div class="d-flex flex-wrap row">
+        <div class="view-item col-6">
+            <div> Name :</div>
+            <div> {{integrationView?.name}} </div>
+        </div>
+          <div class="view-item col-6">
+              <div> URL :</div>
+              <div> {{integrationView?.url}} </div>
+          </div>
+      </div>
+      <div class="d-flex flex-wrap row">
+        <div class="view-item col-6">
+            <div>Version : </div>
+            <div> {{integrationView?.version}} </div>
+        </div>
+          <div class="view-item col-6">
+              <div> Company Id :</div>
+              <div> {{integrationView?.companyId}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+      <div class="view-item col-6">
+        <div> xapi Key :</div>
+        <div class="w-50 text-truncate" title="{{integrationView?.xapiKey}}"> {{integrationView?.xapiKey}} </div>
+    </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+          Cancel
+      </button>
+  </div>
+</ng-template>
+
+<!-- class="w-50 text-truncate" title="{{integrationView?.email}}" -->

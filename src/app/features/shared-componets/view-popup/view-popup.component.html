@@ -1,0 +1,40 @@
+<div class="view-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">View Details</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    <div class="modal-body">
+            <app-view [itemDetails]="data" [isSingleLayer]="isSingleLayer" [isTwoLayer]="isTwoLayer" [isThreeLayer]="isThreeLayer"></app-view>
+           <div  *ngIf="isWarehouse">
+            <ejs-grid #batchgrid id="Batchgrid" [dataSource]="rackBinList" >
+            <e-columns>
+                <!-- <e-column field='sl' headerText='Sl.No' width=50>
+                <ng-template #template let-slNo>
+                    <div>{{ +slNo.index+1 }}</div>
+                </ng-template>
+                </e-column> -->
+                <e-column
+                field="rackNumber"
+                headerText="Rack Number"
+                
+                width="80"
+            ></e-column>
+                <e-column
+                field="rack"
+                headerText="Rack Name"        
+                width="80"
+            ></e-column>
+          
+            <e-column headerText="Bins" width="60" >
+                <ng-template #template let-data>
+                <span *ngFor="let bin of data.bins;let i = index">{{bin}} <span *ngIf="!(data.bins.length === i+1)">,</span> </span>                  
+                </ng-template>
+                </e-column>
+            </e-columns>
+          </ejs-grid>
+          </div>
+    </div>    
+</div>

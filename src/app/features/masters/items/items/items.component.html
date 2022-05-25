@@ -1,0 +1,247 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Item Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='itemsList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'
+                 rowHeight="25"
+                 [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                (toolbarClick)='clickHandler($event)'
+                [toolbar]="toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='code' headerText='Code' isPrimaryKey='true'></e-column>
+                    <e-column field='itemName' headerText='Name'></e-column>
+                    <e-column field='uom' headerText='UOM'></e-column>
+
+                    <e-column field='sequenceNumber' headerText='Sequence No.'></e-column>
+                    <e-column field='vatPercentage' headerText='Vat %'></e-column>
+
+                    <e-column headerText='Action' width="110" [commands]="syncfusionHelperService.commands" ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data >
+                    <div [formGroup]="itemForm">
+                        <div class="d-flex flex-wrap">
+                            <div [ngClass]="{'form-label-group': itemCode.value, 'form-group' : !itemCode.value }" class="col-12">
+                                    <input type="text" class=" e-input form-control  input-control" id="itemCode" formControlName="itemCode" placeholder="">
+                                    <label class="input-control-placeholder" for="itemCode">Item Code</label>
+                                    <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="form-label-group col-12" [ngClass]="{'e-error': code.invalid && (code.dirty || code.touched || submitClicked)}">
+                                <input type="text" class=" e-input  input-control" id="code" formControlName="code" placeholder="code">
+                                <label class="input-control-placeholder" for="code">Code</label>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="code.invalid && (code.dirty || code.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="code.errors.required">
+                                            Code is required.
+                                        </div>
+                                        <div *ngIf="code.errors.pattern">
+                                            Code shouldn't contain spaces.
+                                        </div>
+                                        <div *ngIf="code.errors.duplicate">
+                                             Code already exists.
+                                        </div>
+
+                                    </div>
+                        </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)}">
+                                    <input type="text" class=" e-input  input-control" id="itemName" formControlName="itemName" placeholder="itemName">
+                                    <label class="input-control-placeholder" for="itemName">Item Name</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="itemName.errors.required">
+                                            Name is required.
+                                        </div>
+                                        <div *ngIf="itemName.errors.maxlength">
+                                            Name cannot be more than 32 characters.
+                                        </div>
+                                        <div *ngIf="itemName.errors.duplicate">
+                                             Name already exists.
+                                        </div>
+
+                                    </div>
+                            </div>
+                            <div class="form-group col-12"
+                                [ngClass]="{'e-error': uomMasterId.invalid && (uomMasterId.dirty || uomMasterId.touched || submitClicked)}">
+                                   <ejs-dropdownlist class=" input-control"    formControlName="uomMasterId"  [dataSource]='uomvalues' [allowFiltering]='true'
+                                            [fields]="{text: 'code', value: 'id' }" floatLabelType='Auto' cssClass='e-filled' placeholder="UOM">
+                                   </ejs-dropdownlist>
+                                   <sup class="text-danger">*</sup>
+                                    <div *ngIf="uomMasterId.invalid && (uomMasterId.dirty || uomMasterId.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="uomMasterId.errors.required">
+                                            UOM is required.
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="form-group col-12"
+                                [ngClass]="{'e-error': storageTypeId.invalid && (storageTypeId.dirty || storageTypeId.touched || submitClicked)}">
+
+                                    <ejs-dropdownlist class="e-input input-control" formControlName="storageTypeId" [dataSource]='storageTypesenum' [allowFiltering]='true'
+                                        [fields]="{text: 'text', value: 'value' }" floatLabelType='Auto' cssClass='e-filled' placeholder="Storage Type"
+                                        (ngModelChange)="showStorageClearBtn = storageTypeId.value ? true : false;" [showClearButton]="showStorageClearBtn">
+                                    </ejs-dropdownlist>
+
+                            </div>
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': sequenceNumber.invalid && (sequenceNumber.dirty || sequenceNumber.touched || submitClicked)}">
+
+                                    <input type="number"  class=" e-input  input-control" id="sequenceNumber" formControlName="sequenceNumber" placeholder="sequenceNumber" onkeydown="return event.keyCode !== 69">
+                                    <label class="input-control-placeholder" for="sequenceNumber">Sequence No.</label>
+                                    <sup class="text-danger">*</sup>
+
+                                    <div *ngIf="sequenceNumber.invalid && (sequenceNumber.dirty || sequenceNumber.touched || submitClicked)"  class="e-error d-block">
+                                        <div *ngIf="sequenceNumber.errors.required">
+                                            Sequence No. is required.
+                                        </div>
+                                        <div *ngIf="sequenceNumber.errors.max">
+                                            Sequence No. cannot be more than 9 characters.
+                                        </div>
+                                        <div *ngIf="sequenceNumber.errors.min">
+                                          Sequence No. cannot be zero.
+                                      </div>
+
+                                    </div>
+                            </div>
+
+                            <div class="form-label-group col-12"
+                            [ngClass]="{'e-error': vatPercentage.invalid && (vatPercentage.dirty || vatPercentage.touched || submitClicked)}">
+
+                                <input type="number"  class=" e-input  input-control" id="sequenceNumber" formControlName="vatPercentage" placeholder="Vat %" onkeydown="return event.keyCode !== 69">
+                                <label class="input-control-placeholder" for="sequenceNumber">Vat %</label>
+                                <sup class="text-danger">*</sup>
+
+                                <div *ngIf="vatPercentage.invalid && (vatPercentage.dirty || vatPercentage.touched || submitClicked)"  class="e-error d-block">
+                                    <div *ngIf="vatPercentage.errors.required">
+                                        Vat % is required.
+                                    </div>
+                                    <div *ngIf="vatPercentage.errors.max">
+                                        Max Limit is 3.
+                                    </div>
+
+                                </div>
+                        </div>
+
+                            <div class="form-label-group col-12"
+                                [ngClass]="{'e-error': description.invalid && (description.dirty || description.touched || submitClicked)}">
+                                    <textarea type="text"  class=" e-input  input-control overflow-hidden" id="description"  formControlName="description" placeholder="Description"></textarea>
+                                    <label  class="input-control-placeholder" for="description">Description</label>
+                                    <sup class="text-danger">*</sup>
+                                    <div *ngIf="description.invalid && (description.dirty || description.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="description.errors.maxlength">
+                                            Description cannot be more than 256 characters.
+                                        </div>
+                                        <div *ngIf="description.errors.required">
+                                            Description is required.
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <div class="d-flex ml-1">
+                                  <ejs-checkbox  formControlName="isBatchItem"></ejs-checkbox>
+                                  <label class="pl-2 pt-1" for="isBatchItem">Is Batch Required</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Item Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Code :</div>
+                <div> {{itemView?.code}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Item Name : </div>
+                <div class="w-50 text-truncate" title="{{itemView?.itemName}}"> {{itemView?.itemName}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> UOM :</div>
+                <div> {{itemView?.uom}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Storage Type : </div>
+                <div> {{storageTypes[itemView?.storageTypeId]}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Sequence No. :</div>
+                <div> {{itemView?.sequenceNumber}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Vat % :</div>
+                <div>{{itemView?.vatPercentage}}</div>
+            </div>
+        </div>
+
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Description :</div>
+                <div class="w-50 text-truncate" title="{{itemView?.description}}"> {{itemView?.description}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Is Batch Required :</div>
+                <div> {{itemView?.isBatchItem?'Yes':'No'}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{itemView?.createdDate}} </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

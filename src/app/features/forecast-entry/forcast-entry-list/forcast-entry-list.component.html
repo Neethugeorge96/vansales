@@ -1,0 +1,108 @@
+<div class="subheader">
+  <h1 class="subheader-title"> Forecast Entry List</h1>
+</div>
+<div class="subpage-content">
+  <form [formGroup]="searchForm" autocomplete="off">
+    <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+      <div class="form-label-group col-4" [ngClass]="{'e-error': fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClickedMain)}">
+        <ejs-datepicker formControlName="fromDate" [max]="maxDate" (ngModelChange)="minDate = fromDate.value"
+          format="dd/MM/yyyy" id="fromDate" cssClass='e-filled' placeholder="From Date" floatLabelType='Auto'>
+        </ejs-datepicker>
+        <sup class="text-danger">*</sup>
+          <div *ngIf="fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClickedMain)"   class="e-error d-block">
+            <div *ngIf="fromDate.errors.required">
+                From Date is required.
+            </div>
+          </div>
+      </div>
+      <div class="form-label-group col-4" [ngClass]="{'e-error': toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)}">
+        <ejs-datepicker formControlName="toDate" [min]="minDate" (ngModelChange)="maxDate = toDate.value" id="toDate"
+          cssClass='e-filled' format="dd/MM/yyyy" placeholder="To Date" floatLabelType='Auto'></ejs-datepicker>
+          <sup class="text-danger">*</sup>
+          <div *ngIf="toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)"  class="e-error d-block">
+            <div *ngIf="toDate.errors.required">
+                To Date is required.
+            </div>
+          </div>
+      </div>
+      <div class="form-label-group col-4">
+        <ejs-dropdownlist formControlName="employeeId" [dataSource]='employeeList'
+        (filtering)=" syncfusionHelperService.onFiltering(  $event,  employeeList,  'code', 'employeeName')" [allowFiltering]="true"
+          (ngModelChange)="showEmployeeClearBtn = employeeId.value ? true : false;"
+          [fields]="{text: 'diplayText', value: 'id' }" placeholder="Employee Name" floatLabelType='Auto'
+          [showClearButton]="showEmployeeClearBtn" cssClass='e-static-clear e-filled'>
+        </ejs-dropdownlist>
+
+      </div>
+    </div>
+    <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+      <div class="form-label-group col-4">
+        <ejs-dropdownlist formControlName="routeNo" [dataSource]='routeList'
+        (filtering)=" syncfusionHelperService.onFiltering(  $event,  routeList,  'routeNo', 'routeName')"
+        [allowFiltering]="true"
+          (ngModelChange)="showRouteNoClearBtn = routeNo.value ? true : false;"
+          [fields]="{text: 'diplayText', value: 'id' }" placeholder="Route No." floatLabelType='Auto'
+          [showClearButton]="showRouteNoClearBtn" cssClass='e-static-clear e-filled'>
+        </ejs-dropdownlist>
+
+      </div>
+
+      <div class="form-label-group col-4">
+        <ejs-dropdownlist formControlName="vanNo" [dataSource]='vanList'
+        (filtering)=" syncfusionHelperService.onFiltering(  $event,  vanList,  'vanNumber', 'vanModel')"  [allowFiltering]="true"
+          (ngModelChange)="showVanNOClearBtn = vanNo.value ? true : false;"
+          [fields]="{text: 'diplayText', value: 'id' }" placeholder="Van No." floatLabelType='Auto'
+          [showClearButton]="showVanNOClearBtn" cssClass='e-static-clear e-filled'>
+        </ejs-dropdownlist>
+
+      </div>
+
+      <div class="button-right-wrapper col-3 ml-n4 pt-2">
+        <button type="submit" class="btn btn-sm btn-color" (click)="searchData()">
+          Search
+        </button>
+        <button type="reset" class="btn btn-sm btn-color" (click)="resetSearch()">
+          Reset
+        </button>
+      </div>
+
+
+    </div>
+  </form>
+
+
+  <div class="card p-3">
+    <ejs-grid #Grid gridLines="Both" [allowResizing]='true' [dataSource]='forecastEntryList' [childGrid]='childGrid'
+    (detailDataBound)="getchildgridData($event)" [allowSorting]='true' [allowPaging]='true'
+      (actionBegin)='actionBegin($event)' [pageSettings]="syncfusionHelperService.initialPage"
+      [toolbar]="toolbarExternal" [rowHeight]="syncfusionHelperService.height"
+      (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+      [editSettings]="syncfusionHelperService.editExternal" (created)="syncfusionHelperService.created(Grid)"
+      (load)="syncfusionHelperService.load(Grid);">
+      <e-columns>
+        <e-column field='employeeName' headerText='Employee Name' width="100"></e-column>
+        <e-column field='entryDate' headerText='Entry Date' width="110">
+          <ng-template #template let-d>
+                    {{d.entryDate | date: 'dd-MMM-yyyy'}}
+                </ng-template>
+        </e-column>
+        <e-column field='forecastDate' headerText='Forecast Date' width="100">
+          <ng-template #template let-d>
+            {{d.forecastDate | date: 'dd-MMM-yyyy'}}
+        </ng-template>
+        </e-column>
+        <e-column field='routeNo' headerText='Route No.' width="100"></e-column>
+        <e-column field='vanNo' headerText='Van No.' width="100"></e-column>
+        <e-column headerText="Action" width="60" [commands]="commands"></e-column>
+
+
+      </e-columns>
+
+    </ejs-grid>
+  </div>
+
+
+
+
+</div>

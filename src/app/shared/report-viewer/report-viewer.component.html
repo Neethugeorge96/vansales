@@ -1,0 +1,6 @@
+<div style="height:100%">
+  <bold-reportviewer *ngIf="showReportViewer" id="reportViewer" [reportServiceUrl]="serviceUrl"
+    [processingMode]="processingMode" (ajaxBeforeLoad)="onAjaxRequest($event)" (ajaxSuccess)="onAjaxSuccess($event)"
+    (ajaxError)="onAjaxFailure($event)">
+  </bold-reportviewer>
+</div>

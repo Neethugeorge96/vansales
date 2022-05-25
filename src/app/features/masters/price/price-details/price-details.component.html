@@ -1,0 +1,242 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+    {{viewMode ? 'View Price List Details' : priceId ? 'Edit Price List Details' : 'Create
+    Price List Details'}}
+  </h1>
+  <button class="btn btn-outline-primary btn-sm" (click)="clearValues()" routerLink="/masters/priceListmaster">Back<i
+      class="fal fa-arrow-left ml-2"></i>
+  </button>
+</div>
+<div class="subpage-content">
+  <form [formGroup]="priceHeaderForm" *ngIf="priceHeaderForm">
+    <div class="d-flex flex-wrap align-items-start pt-3 col-md-12">
+
+          <div [ngClass]="{'form-label-group': priceCode.value, 'form-group' : !priceCode.value }" class="col-4 pl-1 pr-1" >
+            <input type="text"  class="form-control e-input input-control" id="priceCode" formControlName="priceCode">
+            <label class="input-control-placeholder" for="priceCode">Price Code</label>
+
+          </div>
+          <div class="form-label-group col-4 pl-1 pr-1"
+            [ngClass]="{'e-error': priceListName.invalid && (priceListName.dirty || priceListName.touched || submitClickedMain)}">
+            <input type="text" class="form-control e-input input-control" id="priceListName" placeholder="Route Name"
+              formControlName="priceListName" (ngModelChange)="setDuplicate()">
+            <label class="input-control-placeholder" for="priceListName">Price List Name</label>
+            <sup class="text-danger">*</sup>
+            <div *ngIf="priceListName.invalid && (priceListName.dirty || priceListName.touched || submitClickedMain)"
+              class="e-error d-block">
+              <div *ngIf="priceListName.errors.required">
+                Price List Name is required.
+              </div>
+              <div *ngIf="priceListName.errors.duplicate">
+                Price List Name already exists.
+              </div>
+            </div>
+          </div>
+          <div class="form-label-group col-4 pl-1 pr-1"
+            [ngClass]="{'e-error': effectiveFrom.invalid && (effectiveFrom.dirty || effectiveFrom.touched || submitClickedMain)}">
+            <ejs-datepicker formControlName="effectiveFrom" cssClass='e-filled' format="dd/MM/yyyy" placeholder="Effective From Date"
+              floatLabelType='Auto'></ejs-datepicker>
+            <sup class="text-danger">*</sup>
+            <div *ngIf="effectiveFrom.invalid && (effectiveFrom.dirty || effectiveFrom.touched || submitClickedMain)"
+              class="e-error d-block">
+              <div *ngIf="effectiveFrom.errors.required">
+                Effective From Date is required.
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="d-flex flex-wrap align-items-start  col-md-12 mb-n3">
+        <div class="form-label-group col-4 pl-1 pr-1"
+          [ngClass]="{'e-error': effectiveTo.invalid && (effectiveTo.dirty || effectiveTo.touched || submitClickedMain)}">
+          <ejs-datepicker formControlName="effectiveTo" [min]='effectiveFrom.value' format="dd/MM/yyyy" cssClass='e-filled' placeholder=" Effective To Date"
+            floatLabelType='Auto'></ejs-datepicker>
+          <sup class="text-danger">*</sup>
+          <div *ngIf="effectiveTo.invalid && (effectiveTo.dirty || effectiveTo.touched || submitClickedMain)"
+            class="e-error d-block">
+            <div *ngIf="effectiveTo.errors.required">
+              Effective To Date is required.
+            </div>
+          </div>
+        </div>
+        <div class="form-label-group col-4 pl-1 pr-1"
+          [ngClass]="{'e-error': currencyId.invalid && (currencyId.dirty || currencyId.touched || submitClickedMain)}">
+          <ejs-dropdownlist class=" input-control" formControlName="currencyId" [dataSource]='currencies'
+            [allowFiltering]='true'  [fields]="{ text: 'currencyCode', value: 'id' }" floatLabelType='Auto' cssClass='e-filled'
+            placeholder="Currency">
+          </ejs-dropdownlist>
+          <sup class="text-danger">*</sup>
+          <div *ngIf="currencyId.invalid && (currencyId.dirty || currencyId.touched || submitClickedMain)"
+            class="e-error d-block">
+            <div *ngIf="currencyId.errors.required">
+              Currency is required.
+            </div>
+          </div>
+        </div>
+        <div class="form-label-group col-4 pl-1 pr-1"
+        [ngClass]="{'e-error': description.invalid && (description.dirty || description.touched || submitClickedMain)}">
+        <textarea type="text" class=" e-input  input-control overflow-hidden" id="description" formControlName="description"
+          placeholder="Description"></textarea>
+        <label class="input-control-placeholder" for="description">Description</label>
+        <div *ngIf="description.invalid && (description.dirty || description.touched || submitClickedMain)"
+          class="e-error d-block">
+          <div *ngIf="description.errors.maxlength">
+            Description cannot be more than 256 characters.
+          </div>
+
+        </div>
+        </div>
+    </div>
+    <div class="d-flex flex-wrap align-items-start  col-md-12 mt-3">
+      <div class="form-label-group col-4 pl-1 pr-1"
+            [ngClass]="{'e-error': discount.invalid && (discount.dirty || discount.touched || submitClickedMain)}">
+            <input type="number" class="form-control e-input input-control" id="discount" placeholder="Discount"
+              formControlName="discount" (ngModelChange)="updateTablePrices()" onkeydown="return event.keyCode !== 69">
+            <label class="input-control-placeholder" for="priceListName">Discount %</label>
+            <sup class="text-danger">*</sup>
+            <div *ngIf="discount.invalid && (discount.dirty || discount.touched || submitClickedMain)"
+              class="e-error d-block">
+              <div *ngIf="discount.errors.required">
+                Discount is required.
+              </div>
+              <div *ngIf="discount.errors.max">
+                Discount cannot be greater than 100
+              </div>
+            </div>
+          </div>
+        <div class="form-label-group col-1">
+          <div class="mt-2">
+              <ejs-checkbox  formControlName="isActive" label="Is Active"></ejs-checkbox>
+          </div>
+
+        </div>
+    </div>
+
+  </form>
+  <div class="card p-3">
+    <ejs-grid #grid [dataSource]='itemPriceList' [searchSettings]='searchOptions' [editSettings]='syncfusionHelperService.editInline' rowHeight ="25"
+      [toolbar]='toolbarInline' (toolbarClick)='clickHandler($event)' (actionBegin)='actionBegin($event)'(rowSelected)='rowSelected($event)'
+      (created)="syncfusionHelperService.created(grid); setToolbar();" (load)="syncfusionHelperService.inlineGridLoad(grid)"  gridLines='Both'>
+      <e-columns>
+        <e-column headerText='S.No.' width='80' isPrimaryKey="true" field="id">
+          <ng-template #template let-d>
+            <div>{{ +d.index+1 }}</div>
+          </ng-template>
+        </e-column>
+        <e-column field='itemName' headerText='Item Code/Name'>
+          <ng-template #template let-d>
+            <span>
+              <span>{{d.itemCode}} -
+                <span class="fs-sm">
+                  {{d.itemName}}
+                </span>
+              </span>
+            </span>
+          </ng-template>
+        </e-column>
+        <e-column field='uomName' headerText='UOM'></e-column>
+        <e-column field='price' headerText='Price'> </e-column>
+        <e-column field='discountPrice' headerText='Discount Price'> </e-column>
+      </e-columns>
+      <ng-template #editSettingsTemplate let-data>
+        <div [formGroup]="itemPriceForm">
+          <table class="e-table e-inline-edit" cellspacing="0.25">
+            <colgroup>
+              <col width='55'>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td width='55'></td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)}">
+                    <!-- <div > -->
+                      <ejs-dropdownlist name="itemName" [allowFiltering]='true' placeholder="Item Code/ Name"
+                        formControlName="itemName" popupHeight='240px' [dataSource]='itemsList'
+                        [fields]="{text: 'itemName', value: 'id' }" (change)="selectUom($event)">
+                        <ng-template #itemTemplate="" let-data="">
+                          <span>
+                            <span>{{data.code}} -
+                              <span class="fs-sm">
+                                {{data.itemName}}</span>
+                            </span>
+                          </span>
+                        </ng-template>
+                      </ejs-dropdownlist>
+                      <div *ngIf="itemName.invalid && (itemName.dirty || itemName.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="itemName.errors.required">
+                          Item is required.
+                        </div>
+
+                      </div>
+                    <!-- </div> -->
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': uomName.invalid && (uomName.dirty || uomName.touched || submitClicked)}">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="uomName"
+                      placeholder="UOM" formControlName="uomName" disabled>
+
+                      <div *ngIf="uomName.invalid && (uomName.dirty || uomName.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="uomName.errors.required">
+                          uom is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': price.invalid && (price.dirty || price.touched || submitClicked)}">
+                    <div>
+                      <input type="number" class="form-control e-input input-control" id="price" placeholder="Price"
+                        formControlName="price" onkeydown="return event.keyCode !== 69" (ngModelChange)="calculatePrices()">
+                      <div *ngIf="price.invalid && (price.dirty || price.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="price.errors.required">
+                          Price is required.
+                        </div>
+                        <div *ngIf="price.errors.max">
+                          Price cannot be more than 10 digits.
+                        </div>
+                        <div *ngIf="price.errors.min">
+                          Please enter a value greater than 0.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td class='e-rowcell'>
+                  <div class="form-group">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="discountPrice"
+                      placeholder="Discount Price" formControlName="discountPrice" disabled>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </ejs-grid>
+    <div class="button-right-wrapper my-3" *ngIf="!viewMode">
+
+      <button type="button" (click)="clearValues()" routerLink="/masters/priceListmaster" class="btn  btn-sm e-btn  m-0 mr-2" >Cancel</button>
+      <button type="button" class="btn  btn-sm e-btn e-primary m-0" data-ripple="true"  (click)="clearSearch()">Save</button>
+
+    </div>
+  </div>
+</div>
+
+<app-file-uploader [uniqKey]="'Item Code'" [showDialog]="showDialog" (closeEvent)="receiveParams($event)" (uploadEvent)="uploadFileData($event)"></app-file-uploader>
+
+
+

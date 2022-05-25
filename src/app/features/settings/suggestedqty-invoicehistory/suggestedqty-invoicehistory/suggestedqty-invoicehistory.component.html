@@ -1,0 +1,118 @@
+
+<div class="subheader">
+  <h1 class="subheader-title">
+      Suggested Qty & Invoice History
+  </h1>
+</div>
+<div class="subpageContent pt-5 pb-5">
+
+  <form [formGroup]="sugQtyInvHisFrm" >
+    <h1 class="subpageContent-title pt-3 ml-4">  Suggested Qty  </h1>
+
+    <div class="d-flex flex-wrap align-items-start pt-3 col-md-10">
+            <div class="col-md-3 pt-3">
+              <label class="input-control" for="suggestedQtyDuration">Select Time Period(Last):</label>
+            </div>
+            <div class="col-md-4 d-flex flex-wrap align-items-start">
+
+              <div class="col-md-3 settingClass" [ngClass]="{'e-error': suggestedQtyDuration.invalid && (suggestedQtyDuration.dirty || suggestedQtyDuration.touched || submitClicked)}">
+                <input type="number" style ="text-align-last: center" class=" pb-3  settingClassInput form-control e-input input-control" id="suggestedQtyDuration"  formControlName="suggestedQtyDuration" >
+                <!-- <sup class="text-danger">*</sup> -->
+                <div *ngIf="suggestedQtyDuration.invalid && (suggestedQtyDuration.dirty || suggestedQtyDuration.touched || submitClicked)"
+                  class="e-error d-block">
+                  <div *ngIf="suggestedQtyDuration.errors.required">
+                    Time period is required.
+                  </div>
+                  <div *ngIf="suggestedQtyDuration.errors.max">
+                    Max limit is 4.
+                  </div>
+
+                </div>
+
+              </div >
+
+              <div class="col-md-2 pt-2 lblborder">
+                  <label class="label-control" for="timePeriod">Days</label>
+              </div>
+            </div>
+
+
+    </div>
+
+    <div class="d-flex flex-wrap align-items-start pt-3 col-md-10">
+        <div class="col-md-3 pt-3">
+          <label class="input-control" for="suggestedQtyExtraPercentage">Extra %(to push the sale qty):</label>
+        </div>
+        <div class="col-md-4 d-flex flex-wrap align-items-start">
+
+          <div class="col-md-3 settingClass" [ngClass]="{'e-error': suggestedQtyExtraPercentage.invalid && (suggestedQtyExtraPercentage.dirty || suggestedQtyExtraPercentage.touched || submitClicked)}">
+            <input type="number" style ="text-align-last: center" class=" pb-3  settingClassInput form-control e-input input-control" id="suggestedQtyExtraPercentage"  formControlName="suggestedQtyExtraPercentage" >
+            <!-- <sup class="text-danger">*</sup> -->
+            <div *ngIf="suggestedQtyExtraPercentage.invalid && (suggestedQtyExtraPercentage.dirty || suggestedQtyExtraPercentage.touched || submitClicked)"
+              class="e-error d-block">
+              <div *ngIf="suggestedQtyExtraPercentage.errors.required">
+              Extra percentage is required.
+              </div>
+              <div *ngIf="suggestedQtyExtraPercentage.errors.max">
+                Max limit is 3.
+              </div>
+
+            </div>
+
+          </div >
+
+          <div class="col-md-2 pt-2 lblborder">
+              <!-- <label class="label-control">Days</label> -->
+              <p class="label-control pl-2" >%</p>
+          </div>
+        </div>
+
+
+    </div>
+
+    <h1 class="subpageContent-title pt-5 mt-2 ml-4">  Invoice History  </h1>
+
+    <div class="d-flex flex-wrap align-items-start pt-3 col-md-10">
+      <div class="col-md-3 pt-3">
+        <label class="input-control" for="invoiceHistoryDuration">Select Time Period(Last):</label>
+      </div>
+      <div class="col-md-4 d-flex flex-wrap align-items-start">
+
+        <div class="col-md-3 settingClass" [ngClass]="{'e-error': invoiceHistoryDuration.invalid && (invoiceHistoryDuration.dirty || invoiceHistoryDuration.touched || submitClicked)}">
+          <input type="number" style ="text-align-last: center" class=" pb-3  settingClassInput form-control e-input input-control" id="invoiceHistoryDuration"  formControlName="invoiceHistoryDuration" >
+          <!-- <sup class="text-danger">*</sup> -->
+          <div *ngIf="invoiceHistoryDuration.invalid && (invoiceHistoryDuration.dirty || invoiceHistoryDuration.touched || submitClicked)"
+            class="e-error d-block">
+            <div *ngIf="invoiceHistoryDuration.errors.required">
+              Time period is required.
+            </div>
+            <div *ngIf="invoiceHistoryDuration.errors.max">
+              Max limit is 4.
+            </div>
+
+          </div>
+
+        </div >
+
+        <div class="col-md-2 pt-2 lblborder">
+            <label class="label-control" for="invoiceHistoryDuration">Days</label>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="mt-5 buttonAlign my-3">
+      <button type="button" class="btn btn-sm btn btn-secondary m-0 mr-2" (click)="close()">  Cancel </button>
+      <button type="button" class="btn  btn-sm e-btn e-primary m-0" data-ripple="true"  (click)="saveData()">Save</button>
+
+
+    </div>
+
+
+
+
+
+
+
+  </form>
+</div>

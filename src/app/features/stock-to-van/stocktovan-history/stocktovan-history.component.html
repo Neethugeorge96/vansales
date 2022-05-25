@@ -1,0 +1,143 @@
+<div class="subheader">
+    <h1 class="subheader-title">Stock To Van History</h1>
+  </div>
+  <div class="subpage-content">
+    <form [formGroup]="searchForm" autocomplete="off">
+      <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+        <div class="form-group col-5" [ngClass]="{'e-error': fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClicked)}">
+          <ejs-datepicker strictMode='false' formControlName="fromDate" [max]="maxDate" (ngModelChange)="minDate = fromDate.value"  cssClass='e-filled' format="dd/MM/yyyy" placeholder="From Date" floatLabelType='Auto'></ejs-datepicker>
+          <sup class="text-danger">*</sup>
+          <div *ngIf="fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClicked)"
+          class="e-error d-block">
+          <div *ngIf="fromDate.errors.required">
+               From Date is required.
+          </div>
+      </div>
+    </div>
+  
+           <div class="form-group col-5" [ngClass]="{'e-error': toDate.invalid && (toDate.dirty || toDate.touched || submitClicked)}">
+                <ejs-datepicker strictMode='false' formControlName="toDate" [min]="minDate" (ngModelChange)="maxDate = toDate.value"  cssClass='e-filled' format="dd/MM/yyyy" placeholder="To Date" floatLabelType='Auto'></ejs-datepicker>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="toDate.invalid && (toDate.dirty || toDate.touched || submitClicked)"
+                class="e-error d-block">
+                <div *ngIf="toDate.errors.required">
+                     To Date is required.
+                </div>
+            </div>
+          </div>
+  
+          <div class="form-group col-5">
+            <ejs-dropdownlist   placeholder="Employee"  formControlName="employeeId" [dataSource]="employeeList"
+            [fields]="{ text: 'diplayText', value: 'id' }"  floatLabelType='Auto'
+            cssClass='e-filled e-static-clear' >
+            </ejs-dropdownlist>
+            <sup class="text-danger">*</sup>
+          </div>
+
+          <div class="form-group col-5"  [ngClass]="{'e-error': salesManId.invalid && (salesManId.dirty || salesManId.touched || submitClicked)}">
+            <ejs-dropdownlist   placeholder="Sales Man"  formControlName="salesManId" [dataSource]="salesManList"
+            [fields]="{ text: 'diplayText', value: 'id' }"  floatLabelType='Auto'
+            cssClass='e-filled e-static-clear' >
+            </ejs-dropdownlist>
+            <sup class="text-danger">*</sup>
+            <div *ngIf="salesManId.invalid && (salesManId.dirty || salesManId.touched || submitClicked)"
+            class="e-error d-block">
+            <div *ngIf="salesManId.errors.required">
+            Sales Man is required.
+            </div>
+          </div>
+          </div>
+          <div class="button-right-wrapper col-2  pt-2">
+            <button type="button" class="btn btn-sm btn-color" (click)="searchData()">
+              Search
+            </button>
+            <button type="button" class="btn btn-sm btn-color" (click)="resetSearch()">
+              Reset
+            </button>
+          </div>
+      </div>
+  
+    </form>
+
+    <div class="card p-3">
+    <ejs-grid #Grid gridLines="Both"  [allowResizing]='true' [dataSource]='stockHistory'
+                [allowSorting]='true'
+                [allowGrouping]="true"
+                [allowPaging]='true'
+                [allowExcelExport]="true"
+                [pageSettings]="syncfusionHelperService.initialPage"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="toolbarExternal"
+                (toolbarClick)='clickHandler($event)'
+                [rowHeight]="syncfusionHelperService.height"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(Grid)"
+                (load)="syncfusionHelperService.load(Grid)"
+                (excelQueryCellInfo)="excelQueryCellInfo($event)"
+                (excelExportComplete)="excelexportcomplete()">
+        <e-columns>
+          <e-column headerText='S.No.' width="70">
+            <ng-template #template let-d>
+                <div>{{ +d.index+1 }}</div>
+            </ng-template>
+        </e-column>
+        <e-column field='itemCode' headerText='Item Code' width="130"></e-column>
+            <e-column field='itemName' headerText='Item Name' width="200"></e-column>
+            <e-column field='routeNo' headerText='Route No.' width="110">
+                <!-- <ng-template #template let-d>
+                    {{d.stockInDate | date: 'dd-MM-yyy'}}
+                </ng-template> -->
+            </e-column>
+            <e-column field='date' headerText='Date' width="130">
+              <ng-template #template let-d>
+                {{d.date}}
+            </ng-template>
+            </e-column>
+            <e-column field='issuedQuantity' headerText='Issued Qty' width="115"></e-column>
+            <e-column field='qtySoldCash' headerText='Cash Qty' width="100"></e-column>
+            <e-column field='qtySoldCredit' headerText='Credit Qty ' width="110"></e-column>
+            <!-- <e-column field='toatalStockCount' headerText='Total Stock Count'></e-column> -->
+            <e-column field='expiredQty' headerText='Scrap Qty' width="120"></e-column>
+            <e-column field='goodReturnQty' headerText='Good Return' width="130"></e-column>
+              <e-column field='balance' headerText='Balance' width="110">
+            </e-column>
+        </e-columns>
+
+        <e-aggregates>
+          <e-aggregate>
+              <e-columns >
+                <e-column field="date" type="sum">
+                  <ng-template #footerTemplate let-data>Total: </ng-template>
+              </e-column>
+
+                  <e-column field="qtySoldCash" type="sum">
+                      <ng-template #footerTemplate let-data> {{data.sum}}</ng-template>
+                  </e-column>
+
+                <e-column field="qtySoldCredit" type="sum">
+                    <ng-template #footerTemplate let-data>{{data.sum}}</ng-template>
+                </e-column>
+
+                <e-column field="expiredQty" type="sum">
+                  <ng-template #footerTemplate let-data>{{data.sum}}</ng-template>
+              </e-column>
+
+              <e-column field="goodReturnQty" type="sum">
+                <ng-template #footerTemplate let-data>{{data.sum}}</ng-template>
+            </e-column>
+
+                <e-column field="totalReturn" type="sum">
+                  <ng-template #footerTemplate let-data>{{data.sum}}</ng-template>
+              </e-column>
+
+              <e-column field="balance" type="sum">
+                <ng-template #footerTemplate let-data>{{data.sum}}</ng-template>
+            </e-column>
+            </e-columns>
+          </e-aggregate>
+        </e-aggregates>
+    </ejs-grid>
+    </div>
+    </div>
+

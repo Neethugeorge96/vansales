@@ -1,0 +1,1020 @@
+<div class="subheader">
+  <h1 class="subheader-title">Customer Details</h1>
+</div>
+<div class="subpage-content">
+  <form [formGroup]="searchForm" autocomplete="off">
+    <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+         <div class="form-label-group col-4">
+          <ejs-dropdownlist  placeholder="Sales Type"  formControlName="saleTypeId" [dataSource]="saleTypesenum"
+          [fields]="{ text: 'text', value: 'value' }"  (ngModelChange)="showSalesTypeClearBtn = saleType.value ? true : false;" floatLabelType='Auto' [showClearButton]="showSalesTypeClearBtn"
+           cssClass='e-static-clear e-filled' >
+          </ejs-dropdownlist>
+        </div>
+
+        <div class="form-label-group col-4">
+          <ejs-dropdownlist   placeholder="Customer Type"  formControlName="customerStatus" [dataSource]="customerStatuses"
+          [fields]="{ text: 'text', value: 'value' }"  floatLabelType='Auto' (ngModelChange)="showCustomerClearBtn = customer.value ? true : false;" [showClearButton]="showCustomerClearBtn"
+          cssClass='e-filled e-static-clear' >
+          </ejs-dropdownlist>
+        </div>
+
+        <div class="button-right-wrapper col-4 ml-n4 pt-2">
+          <button type="button" class="btn btn-sm btn-color" (click)="searchData()">
+            Search
+          </button>
+          <button type="button" class="btn btn-sm btn-color" (click)="resetSearch()">
+            Reset
+          </button>
+        </div>
+    </div>
+
+  </form>
+
+
+  <div class="card p-3" >
+    <div>
+      <ejs-grid
+        #grid
+        [dataSource]="customerList"
+        (actionBegin)="actionBegin($event)"
+        gridLines="Both"
+        (commandClick)="commandClick($event)"
+        (actionComplete)="actionComplete($event)"
+        [allowResizing]="true"
+        [allowSorting]="true"
+        rowHeight="25"
+        [allowPaging]="true"
+        [pageSettings]="syncfusionHelperService.initialPage"
+        [rowHeight]="syncfusionHelperService.height"
+        (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+        [toolbar]="syncfusionHelperService.toolbarExternal"
+        [editSettings]="syncfusionHelperService.editExternal"
+        (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+        (created)="syncfusionHelperService.created(grid)"
+        (load)="syncfusionHelperService.load(grid)"
+      >
+        <e-columns>
+          <e-column headerText="S.No." width="70">
+            <ng-template #template let-d>
+              <div>{{ +d.index + 1 }}</div>
+            </ng-template>
+          </e-column>
+          <e-column
+          [width]="120"
+          field="code"
+          headerText="Code"
+          isPrimaryKey="true"
+        ></e-column>
+          <e-column
+            [width]="160"
+            field="customerName"
+            headerText="Customer Name"
+          ></e-column>
+          <e-column [width]="100" field="cityName" headerText="City"></e-column>
+          <e-column [width]="120" field="saleTypeId" headerText="Sales Type">
+            <ng-template #template let-d>
+              <div>{{ saleTypes[d.saleTypeId] }}</div>
+            </ng-template>
+          </e-column>
+          <e-column [width]="130" field="creditTerm" headerText="Credit Term"></e-column>
+          <e-column [width]="120" field="creditLimit" headerText="Credit Limit"></e-column>
+          <e-column [width]="150" field="customerStatus" headerText="Customer Type">
+            <ng-template #template let-d>
+              <div>{{ customerStatusesenum[d.customerStatus] }}</div>
+            </ng-template>
+          </e-column>
+          <e-column [width]="100" field="priceListName" headerText="Price List"></e-column>
+          <e-column [width]="80" field="activeStatus" headerText="Status">
+            <ng-template #template let-d>
+              <div>{{ activeStatusEnumView[d.activeStatus] }}</div>
+            </ng-template>
+          </e-column>
+
+
+
+          <!-- <e-column [width]="140" field="email" headerText="Email"></e-column>
+          <e-column
+            [width]="140"
+            field="phoneNumber"
+            headerText="PH Number"
+          ></e-column> -->
+
+          <e-column
+            headerText="Action"
+            [width]="150"
+            [commands]="syncfusionHelperService.commands"
+          ></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+          <div [formGroup]="customerForm">
+            <div class="d-flex flex-wrap">
+
+              <div [ngClass]="{'form-label-group': customerCode.value, 'form-group' : !customerCode.value }" class="col-4 pl-1 pr-1">
+                <input
+                  type="text"
+                  class="e-input input-control"
+                  formControlName="customerCode"
+                />
+                <label class="input-control-placeholder" for="customerCode"
+                  >Customer Code</label
+                >
+                <sup class="text-danger">*</sup>
+              </div>
+              <div class="form-label-group col-4 pl-1 pr-1" [ngClass]="{
+                'e-error':
+                code.invalid &&
+                  (code.dirty ||
+                  code.touched ||
+                    submitClicked)
+              }">
+                <input
+                  type="text"
+                  id="code"
+                  class="e-input input-control"
+                  formControlName="code"
+                  placeholder="Code"
+                />
+                <label class="input-control-placeholder" for="code"
+                  >Code</label
+                >
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    code.invalid &&
+                    (code.dirty ||
+                      code.touched ||
+                      submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="code.errors.required">
+                    Code is required.
+                  </div>
+                  <div *ngIf="code.errors.pattern">
+                    Code shouldn't contain spaces.
+                  </div>
+                  <div *ngIf="code.errors.duplicate">
+                    Code already exists.
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    customerName.invalid &&
+                    (customerName.dirty ||
+                      customerName.touched ||
+                      submitClicked)
+                }"
+              >
+                <input
+                  type="text"
+                  class="e-input input-control" id="customerName"
+                  formControlName="customerName" placeholder="customerName"
+                />
+                <label class="input-control-placeholder" for="customerName"
+                  >Customer Name</label
+                >
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    customerName.invalid &&
+                    (customerName.dirty ||
+                      customerName.touched ||
+                      submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="customerName.errors.required">
+                    Customer Name is required.
+                  </div>
+                  <!-- <div *ngIf="customerName.errors.pattern">
+                    Special characters are not allowed.
+                  </div> -->
+                  <div *ngIf="customerName.errors.maxlength">
+                    Customer Name maxlimit is 255 characters.
+
+                  </div>
+                </div>
+              </div>
+
+              <div
+              class="form-label-group col-4 pl-1 pr-1"
+              [ngClass]="{
+                'e-error':
+                  email.invalid &&
+                  (email.dirty || email.touched || submitClicked)
+              }"
+            >
+              <input
+                type="text"
+                class="e-input input-control"
+                formControlName="email"
+                id="email" placeholder="email"
+              />
+              <label class="input-control-placeholder" for="email"
+                >Email</label
+              >
+
+              <div
+                *ngIf="
+                  email.invalid &&
+                  (email.dirty || email.touched || submitClicked)
+                "
+                class="e-error d-block"
+              >
+                <div *ngIf="email.errors.pattern">Email is invalid</div>
+              </div>
+              </div>
+
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    contactPerson.invalid &&
+                    (contactPerson.dirty ||
+                      contactPerson.touched ||
+                      submitClicked)
+                }"
+              >
+                <input
+                  type="text"
+                  class="e-input input-control"
+                  formControlName="contactPerson"
+                  id="contactPerson"
+                  placeholder="contactPerson"
+                />
+                <label class="input-control-placeholder" for="contactPerson"
+                  >Contact Person</label
+                >
+                <div
+                  *ngIf="
+                    contactPerson.invalid &&
+                    (contactPerson.dirty ||
+                      contactPerson.touched ||
+                      submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="contactPerson.errors.maxlength">
+                    Contact person cannot be more than 36 characters.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    contactPersonMobile.invalid &&
+                    (contactPersonMobile.dirty ||
+                      contactPersonMobile.touched ||
+                      submitClicked)
+                }"
+              >
+                <!-- <input type="number" class=" e-input" > -->
+                <!-- <label class="input-control-placeholder" for="contactPersonMobile">Contact Person Mobile</label> -->
+                <ejs-maskedtextbox
+                  mask="000 000000000"
+                  cssClass="e-filled"
+                  floatLabelType="Auto"
+                  formControlName="contactPersonMobile"
+                  placeholder="Contact Person Mobile"
+                ></ejs-maskedtextbox>
+              </div>
+
+              <div
+              class="form-label-group col-4 pl-1 pr-1"
+              [ngClass]="{
+                'e-error':
+                  contactPersonEmail.invalid &&
+                  (contactPersonEmail.dirty ||
+                    contactPersonEmail.touched ||
+                    submitClicked)
+              }"
+            >
+              <input
+                type="text"
+                class="e-input input-control"
+                formControlName="contactPersonEmail"
+                id="contactPersonEmail"
+                placeholder="contactPersonEmail"
+              />
+              <label
+                class="input-control-placeholder"
+                for="contactPersonEmail"
+                >Contact Person Email</label
+              >
+              <div
+                *ngIf="
+                  contactPersonEmail.invalid &&
+                  (contactPersonEmail.dirty ||
+                    contactPersonEmail.touched ||
+                    submitClicked)
+                "
+                class="e-error d-block"
+              >
+                <div *ngIf="contactPersonEmail.errors.pattern">
+                  Email is invalid.
+                </div>
+              </div>
+             </div>
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    companyName.invalid &&
+                    (companyName.dirty || companyName.touched || submitClicked)
+                }"
+              >
+                <!-- <sup class="text-danger">*</sup> -->
+                <input
+                  type="text"
+                  class="e-input input-control"
+                  formControlName="companyName"
+                  id="companyName"
+                  placeholder="companyName"
+                />
+                <label class="input-control-placeholder" for="companyName"
+                  >Company Name</label
+                >
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    companyName.invalid &&
+                    (companyName.dirty || companyName.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                <div *ngIf="companyName.errors.required">
+                  Company Name is required.
+                </div>
+                  <div *ngIf="companyName.errors.pattern">
+                    Special characters are not allowed.
+                  </div>
+                  <div *ngIf="companyName.errors.maxlength">
+                    Company Name cannot be more than 255 characters.
+                  </div>
+                </div>
+              </div>
+              <div
+              class="form-group col-4 pl-1 pr-1"
+              [ngClass]="{
+                'e-error':
+                  phoneNumber.invalid &&
+                  (phoneNumber.dirty || phoneNumber.touched || submitClicked)
+              }"
+            >
+
+              <ejs-maskedtextbox
+                mask="000 000000000"
+                cssClass="e-filled"
+                floatLabelType="Auto"
+                formControlName="phoneNumber"
+                placeholder="Office Phone No."
+              ></ejs-maskedtextbox>
+            </div>
+
+            <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    mobileNumber.invalid &&
+                    (mobileNumber.dirty ||
+                      mobileNumber.touched ||
+                      submitClicked)
+                }"
+              >
+
+                <ejs-maskedtextbox
+                  mask="000 000000000"
+                  cssClass="e-filled"
+                  floatLabelType="Auto"
+                  formControlName="mobileNumber"
+                  placeholder="Mobile No."
+                ></ejs-maskedtextbox>
+              </div>
+
+              <div
+                class="form-label-group col-8 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    address.invalid &&
+                    (address.dirty || address.touched || submitClicked)
+                }"
+              >
+              <textarea type="text" class="e-input input-control overflow-hidden " formControlName="address" id="address" placeholder="address"></textarea>
+
+                <label class="input-control-placeholder" for="address" >Address</label  >
+
+
+                <div
+                  *ngIf="
+                    address.invalid &&
+                    (address.dirty || address.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="address.errors.maxlength">
+                    Address cannot be more than 64 characters.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    cityId.invalid &&
+                    (cityId.dirty || cityId.touched || submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="City"
+                  formControlName="cityId"
+                  [dataSource]="cities"
+                  [allowFiltering]="true"
+                  [fields]="{ text: 'cityName', value: 'id' }"
+                  (ngModelChange)="getLocations()"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    cityId.invalid &&
+                    (cityId.dirty || cityId.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="cityId.errors.required">City is required.</div>
+                </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    locationId.invalid &&
+                    (locationId.dirty || locationId.touched || submitClicked)
+                }"
+              >
+
+                <ejs-dropdownlist
+                  placeholder="Location"
+                  formControlName="locationId"
+                  [dataSource]="locations"
+                  [allowFiltering]="true"
+                  [fields]="{ text: 'locationName', value: 'id' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    locationId.invalid &&
+                    (locationId.dirty || locationId.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="locationId.errors.required">
+                    Location is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    geoLocation.invalid &&
+                    (geoLocation.dirty || geoLocation.touched || submitClicked)
+                }"
+              >
+                <input type="text" class="e-input input-control" id="geoLocation" placeholder="geoLocation" #search />
+                <label class="input-control-placeholder" for="geoLocation"
+                  >Geo Location</label
+                >
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    saleTypeId.invalid &&
+                    (saleTypeId.dirty || saleTypeId.touched || submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="Sales Type"
+                  formControlName="saleTypeId"
+                  [dataSource]="saleTypesenum"
+                  [fields]="{ text: 'text', value: 'value' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    saleTypeId.invalid &&
+                    (saleTypeId.dirty || saleTypeId.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="saleTypeId.errors.required">
+                    Sale type is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    creditTerm.invalid &&
+                    (creditTerm.dirty || creditTerm.touched || submitClicked), 'form-label-group': saleTypeId.value != 2, 'form-group' : saleTypeId.value == 2 }"
+              >
+                <input
+                  type="number"
+                  class="e-input input-control"
+                  formControlName="creditTerm"
+                  id="creditTerm"
+                  [placeholder]="creditTermplaceholder"
+                  onkeydown="return event.keyCode !== 69"
+                />
+                <label class="input-control-placeholder" for="creditTerm"
+                  >Credit Term</label
+                >
+                <sup class="text-danger" *ngIf="saleTypeId.value && saleTypeId.value != 2">*</sup>
+                <div
+                *ngIf="
+                creditTerm.invalid &&
+                  (creditTerm.dirty || creditTerm.touched || submitClicked)
+                "
+                class="e-error d-block"
+              >
+              <div *ngIf="creditTerm.errors.required">
+                Credit Term is required.
+              </div>
+                <div *ngIf="creditTerm.errors.max">
+                  Credit Term can not be more than 3 characters.
+                </div>
+                <div *ngIf="creditTerm.errors.min">
+                  Credit Term cannot be Zero.
+                </div>
+              </div>
+              </div>
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    creditLimit.invalid &&
+                    (creditLimit.dirty || creditLimit.touched || submitClicked), 'form-label-group': saleTypeId.value != 2, 'form-group' : saleTypeId.value == 2
+                }"
+              >
+                <input
+                  type="number"
+                  class="e-input input-control"
+                  formControlName="creditLimit"
+                  id="creditLimit"
+                  [placeholder]="creditLimitplaceholder"
+                  onkeydown="return event.keyCode !== 69"
+                />
+                <label class="input-control-placeholder" for="creditLimit"
+                  >Credit Limit</label
+                >
+                <sup class="text-danger" *ngIf="saleTypeId.value && saleTypeId.value != 2">*</sup>
+                <div
+                *ngIf="
+                creditLimit.invalid &&
+                  (creditLimit.dirty || creditLimit.touched || submitClicked)
+                "
+                class="e-error d-block"
+              >
+              <div *ngIf="creditLimit.errors.required">
+                Credit Limit is required.
+              </div>
+                <div *ngIf="creditLimit.errors.max">
+                  Credit Limit can not be more than 10 characters.
+                </div>
+              </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    customerStatus.invalid &&
+                    (customerStatus.dirty ||
+                      customerStatus.touched ||
+                      submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="Customer Type"
+                  formControlName="customerStatus"
+                  [dataSource]="customerStatuses"
+                  [fields]="{ text: 'text', value: 'value' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    customerStatus.invalid &&
+                    (customerStatus.dirty ||
+                      customerStatus.touched ||
+                      submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="customerStatus.errors.required">
+                    Customer Type is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    balanceAmount.invalid &&
+                    (balanceAmount.dirty ||
+                      balanceAmount.touched ||
+                      submitClicked), 'form-label-group': balanceAmount.value !== '', 'form-group' : balanceAmount.value === ''}"
+              >
+                <input
+                  type="number"
+                  class="e-input input-control"
+                  formControlName="balanceAmount"
+                  id="balanceAmount"
+
+                />
+                <label class="input-control-placeholder" for="balanceAmount"
+                  >Balance Amount</label
+                >
+              </div>
+
+              <div
+              class="form-label-group col-4 pl-1 pr-1"
+              [ngClass]="{
+                'e-error':
+                  vatNumber.invalid &&
+                  (vatNumber.dirty || vatNumber.touched || submitClicked)
+              }"
+            >
+              <input
+                type="text"
+                class="e-input input-control"
+                formControlName="vatNumber"
+                id="vatNumber"
+                placeholder="vatNumber"
+              />
+              <label class="input-control-placeholder" for="vatNumber"
+                >Vat No.</label
+              >
+              <!-- <sup class="text-danger">*</sup> -->
+              <div
+                *ngIf="
+                  vatNumber.invalid &&
+                  (vatNumber.dirty || vatNumber.touched || submitClicked)
+                "
+                class="e-error d-block"
+              >
+                <!-- <div *ngIf="vatNumber.errors.required">
+                  Vat No. is required.
+                </div> -->
+                <div *ngIf="vatNumber.errors.maxlength">
+                  Vat No. can not be more than 15 characters.
+                </div>
+                <div *ngIf="vatNumber.errors.pattern">
+                  Vat No. cannot be zero.
+                </div>
+              </div>
+            </div>
+
+              <div
+                class="form-label-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    zipCode.invalid &&
+                    (zipCode.dirty || zipCode.touched || submitClicked)
+                }"
+              >
+                <input
+                  type="number"
+                  class="e-input input-control"
+                  formControlName="zipCode"
+                  id="zipCode"
+                  placeholder="zipCode"
+                  onkeydown="return event.keyCode !== 69"
+
+                />
+                <label class="input-control-placeholder" for="zipCode"
+                  >Zip Code</label
+                >
+                <div
+                *ngIf="
+                zipCode.invalid &&
+                  (zipCode.dirty || zipCode.touched || submitClicked)
+                "
+                class="e-error d-block"
+              >
+                <div *ngIf="zipCode.errors.max">
+                  Zip Code can not be more than 10 characters.
+                </div>
+                <div *ngIf="zipCode.errors.min">
+                  Zip Code cannot be zero.
+                </div>
+              </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    currencyID.invalid &&
+                    (currencyID.dirty || currencyID.touched || submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="Currency"
+                  formControlName="currencyID"
+                  [dataSource]="currencies"
+                  [allowFiltering]="true"
+                  [fields]="{ text: 'currencyCode', value: 'id' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    currencyID.invalid &&
+                    (currencyID.dirty || currencyID.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="currencyID.errors.required">
+                    Currency is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    activeStatus.invalid &&
+                    (activeStatus.dirty || activeStatus.touched || submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="Status"
+                  formControlName="activeStatus"
+                  [dataSource]="activeStatusEnum"
+                  [fields]="{ text: 'text', value: 'value' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    activeStatus.invalid &&
+                    (activeStatus.dirty || activeStatus.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="activeStatus.errors.required">
+                    Status is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="form-group col-4 pl-1 pr-1"
+                [ngClass]="{
+                  'e-error':
+                    priceListCode.invalid &&
+                    (priceListCode.dirty || priceListCode.touched || submitClicked)
+                }"
+              >
+                <ejs-dropdownlist
+                  placeholder="Price List"
+                  formControlName="priceListMasterId"
+                  [dataSource]="priceList"
+                  [fields]="{ text: 'priceListName', value: 'id' }"
+                  floatLabelType='Auto' cssClass='e-filled'
+                  [allowFiltering]="true"
+                >
+                </ejs-dropdownlist>
+
+                <sup class="text-danger">*</sup>
+                <div
+                  *ngIf="
+                    priceListCode.invalid &&
+                    (priceListCode.dirty || priceListCode.touched || submitClicked)
+                  "
+                  class="e-error d-block"
+                >
+                  <div *ngIf="priceListCode.errors.required">
+                    Price List is required.
+                  </div>
+                </div>
+              </div>
+
+              <div
+              class="form-group col-4 pl-1 pr-1"
+              [ngClass]="{
+                'e-error':
+                  priceListCode.invalid &&
+                  (priceListCode.dirty || priceListCode.touched || submitClicked)
+              }"
+            >
+              <ejs-dropdownlist
+                placeholder="Item Grouping"
+                formControlName="itemGroupingId"
+                [dataSource]="itemGroupingList"
+                (filtering)=" syncfusionHelperService.onFiltering(  $event,  itemGroupingList,  'code', 'name')"
+                [fields]="{ text: 'diplayText', value: 'id' }"
+                floatLabelType='Auto' cssClass='e-filled'
+                [allowFiltering]="true"
+              >
+              </ejs-dropdownlist>
+            </div>
+
+            </div>
+          </div>
+        </ng-template>
+      </ejs-grid>
+    </div>
+  </div>
+</div>
+
+
+
+ <ng-template #content let-modal >
+  <div >
+    <div class="modal-header" >
+      <h4 class="modal-title" id="modal-basic-title">
+          Customer Details
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">
+              ×
+          </span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Customer Code :</div>
+              <div> {{customerView?.code}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div>Customer Name : </div>
+              <div> {{customerView?.customerName}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Company Name :</div>
+              <div> {{customerView?.companyName}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div>Email : </div>
+              <div> {{customerView?.email}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Address :</div>
+              <div class="w-50 text-truncate" title="{{customerView?.address}}"> {{customerView?.address}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> City :</div>
+              <div> {{customerView?.cityName}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Zip Code :</div>
+              <div> {{customerView?.zipCode}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Phone Number :</div>
+              <div> {{customerView?.phoneNumber}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Mobile Number :</div>
+              <div> {{customerView?.mobileNumber}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Location :</div>
+              <div> {{customerView?.location}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Contact Person :</div>
+              <div> {{customerView?.contactPerson}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Contact Person Mobile :</div>
+              <div> {{customerView?.contactPersonMobile}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Contact Person Email :</div>
+              <div> {{customerView?.contactPersonEmail}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Sale Type :</div>
+              <div> {{saleTypes[customerView?.saleTypeId]}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Credit Term :</div>
+              <div> {{customerView?.creditTerm}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Credit Limit :</div>
+              <div> {{customerView?.creditLimit}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Balance Amount :</div>
+              <div> {{customerView?.balanceAmount}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Active Status :</div>
+              <div> {{activeStatusEnumView[customerView?.activeStatus]}}</div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+              <div> Currency :</div>
+              <div> {{customerView?.currencyName}} </div>
+          </div>
+          <div class="view-item col-6">
+              <div> Vat Number :</div>
+              <div> {{customerView?.vatNumber}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+          <div class="view-item col-6">
+            <div> Price List :</div>
+            <div> {{customerView?.priceListName}} </div>
+          </div>
+          <div class="view-item col-6">
+            <div> Item Grouping :</div>
+            <div> {{customerView?.itemGroupingName}} </div>
+          </div>
+      </div>
+
+      <div class="d-flex flex-wrap row">
+      <div class="view-item col-6">
+        <div> Created Date :</div>
+        <div> {{customerView?.createdDate}} </div>
+    </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+          Cancel
+      </button>
+  </div>
+  </div>
+
+</ng-template>
+
+
+
+

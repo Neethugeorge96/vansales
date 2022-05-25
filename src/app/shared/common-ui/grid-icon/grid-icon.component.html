@@ -1,0 +1,62 @@
+<div>
+    <ejs-grid [dataSource]='supplierQuoteList' [allowPaging]='true' [toolbar]='toolbarOptions' [editSettings]='editSettings' (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)'>
+        <e-columns>
+            <e-column field='requestForQuoteBucketNumber' headerText='RFQ Bucket Number' width=150></e-column>
+            <e-column field='supplierCode' headerText='Supplier Code' format='C' width=120></e-column>
+            <e-column field='revision' headerText='Revision' format='yMd' width=140></e-column>
+            <e-column field='quoteReceivedDate' headerText='Quotes Receival Date' format='yMd' width=140></e-column>
+            <e-column   headerText='Actions' width=120 [commands]='commands'></e-column>
+            <e-column headerText='Action2' width=120>
+              <ng-template #template let-data>
+                <button data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-icon-sync"><i class="e-view e-icons"></i></button>
+                <button data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-icon-sync"><i class="e-edit e-icons"></i></button>
+                <button data-toggle="tooltip" data-placement="top" title="Delete" class="btn btn-icon-sync"><i class="e-delete e-icons"></i></button>
+              </ng-template>
+            </e-column>
+        </e-columns>
+
+        <ng-template #editSettingsTemplate let-data>
+          <div [formGroup]="orderForm">
+              <div class="d-flex flex-wrap">                  
+                  <div class="form-group form-input-line col-6">
+                      <div>
+                          <label for="requestForQuoteBucketNumber">requestForQuoteBucketNumber</label>
+                          <sup class="text-danger">*</sup>
+                      </div>
+                      <div>
+                          <input type="text" class=" e-input"  placeholder="Qty" formControlName="requestForQuoteBucketNumber" maxlength="10">
+                      </div>
+                  </div>
+                  <div class="form-group form-input-line col-6">
+                      <div>
+                          <label for="supplierCode">supplierCode</label>
+                          <sup class="text-danger">*</sup>
+                      </div>
+                      <div>
+                          <input type="text" class=" e-input"  placeholder="Re-Order Level" formControlName="supplierCode" maxlength="10">
+                      </div>
+                  </div>
+                  <div class="form-group form-input-line col-6">
+                      <div>
+                          <label for="revision">revision</label>
+                          <sup class="text-danger">*</sup>
+                      </div>
+                      <div>
+                          <input type="text" class=" e-input"  placeholder="Safety Stock Level" formControlName="revision" maxlength="10">
+                      </div>
+                  </div>
+                  <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="plantId">plantid</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <ejs-dropdownlist   formControlName="plantId" value="plantName" [dataSource]='plantList' [fields]="{text: 'plantName', value: 'id' }"  popupHeight='300px' floatLabelType='Never'></ejs-dropdownlist>
+                    </div>
+                </div>
+                  
+              </div>
+          </div>
+      </ng-template>
+        </ejs-grid>
+</div>

@@ -1,0 +1,53 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+      Remarks
+  </h1>
+</div>
+ <div class="subpage-content">
+  <div class="card p-3">
+      <div>
+          <ejs-grid #grid [dataSource]='remarksList'
+              gridLines='Both'
+               rowHeight="25"
+              [allowPaging]='true'
+              [allowSorting]='true'
+              [pageSettings]="syncfusionHelperService.initialPage"
+            [rowHeight]="syncfusionHelperService.height"
+              (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+              [toolbar]="syncfusionHelperService.toolbarExternal"
+              (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+              (created)="syncfusionHelperService.created(grid)"
+              (load)="syncfusionHelperService.load(grid)"
+              [allowResizing]='true'>
+              <e-columns>
+                  <e-column headerText='S.No.' width='60'>
+                      <ng-template #template let-d>
+                          <div>{{ +d.index+1 }}</div>
+                      </ng-template>
+                  </e-column>
+                  <e-column field='systemRemarks' headerText='System Remarks'></e-column>
+                  <e-column field='stockCode' headerText='Import Reference Code'></e-column>
+                  <e-column field='stockInDate' headerText='Stock In Date' isPrimaryKey='true'></e-column>
+                  <e-column field='routeNo' headerText='Route No.'></e-column>
+                  <e-column field='vanNumber' headerText='Van No.'></e-column>
+                  <e-column field='locationCode' headerText='Location Code'></e-column>
+                  <e-column field='customerCode' headerText='Customer Code'></e-column>
+                  <e-column field='lpoId' headerText='LPO Id'></e-column>
+                  <e-column field='itemCode' headerText='Item Code'></e-column>
+                  <e-column field='batchNumber' headerText='Batch No.'></e-column>
+                  <e-column field='productionDate' headerText='Production Date'></e-column>
+                  <e-column field='expiryDate' headerText='Expiry Date'></e-column>
+                  <e-column field='LotNumber' headerText='LOT No.'></e-column>
+                  <e-column field='quantity' headerText='Quantity'></e-column>
+              </e-columns>
+
+          </ejs-grid>
+
+      </div>
+      <div class="remarksButtns">
+        <button type="button" class="btn  btn-sm e-btn  m-0 " (click)="Clear()">Cancel</button>
+        <button type="button" class="btn  btn-sm e-btn e-primary m-0 ml-2" data-ripple="true" disabled="{{saveBtnDisabled}}" (click)="Save()">Save</button>
+
+      </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="e-input-group form-group-dropdown1">
+                   
+    <div class="col-8 p-0 form-group-dropdown1-div">
+        <input type="number" class="form-col1 e-input" [(ngModel)]="dataForParent.text" maxlength="10">
+    </div>
+
+    <div class="col-4 p-0">
+        <ejs-dropdownlist class="form-col2"  (click)="getAllCurrency()" (change)="dataChange($event)" [allowFiltering]='true' [dataSource]='currencyList'  popupHeight='300px' [fields]="{text: 'code', value: 'code' }"  floatLabelType='Never'></ejs-dropdownlist>
+    </div>
+</div>

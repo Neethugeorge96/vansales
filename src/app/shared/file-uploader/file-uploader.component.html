@@ -1,0 +1,46 @@
+<ejs-dialog id='dialog' #ejDialog isModal='true' (overlayClick)="onOverlayClick()" [position]="position"
+  [target]='targetElement' width='25%' class="stocktovanHeight" showCloseIcon='true' (close)="closeDialog()" (beforeOpen)="validation($event)">
+  <ng-template #header>
+    <div title="Upload" class=" uploadhead e-icon-settings dlg-template"> Upload File </div>
+  </ng-template>
+  <ng-template #content>
+
+    <input type="file"  class="file-input" (change)="onFileSelected($event)"
+    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" #fileUpload>
+    <div class="selectFileBtn">
+
+      <button type="button" class="upload-btn btn  btn-sm btn-color ml-4 m-0" (click)="fileUpload.value=null;fileUpload.click()">
+        Select File
+        <img class="selectFileIcon" src="../../../../assets/img/software-upload.svg" />
+      </button>
+
+    </div>
+    <div class="hrupload">
+      <hr>
+    </div>
+
+<div class="file-upload">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-10">
+          {{file?.name || "No file uploaded yet."}}
+        </div>
+
+        <div class="col-12 col-sm-12 col-md-2" *ngIf="file?.name">
+          <button class="uploadDeleteIcon" (click)="file=''">
+            <img  src="../../../../assets/img/uploadDeleteIcon.svg" />
+          </button>
+
+        </div>
+    </div>
+</div>
+
+
+
+  </ng-template>
+  <ng-template #footerTemplate>
+    <button type="button" class="btn  btn-sm e-btn e-primary m-0" data-ripple="true" [disabled]='!file || hasDuplicate'   (click)="uploadFile()">Upload</button>
+    <button type="button" class="btn  btn-sm e-btn  m-0 mr-2" (click)="ejDialog.hide(); closeDialog();">Cancel</button>
+
+    <!-- <button id="sendButton" class="e-control e-btn e-primary sendButton" data-ripple="true">Send</button> -->
+  </ng-template>
+</ejs-dialog>

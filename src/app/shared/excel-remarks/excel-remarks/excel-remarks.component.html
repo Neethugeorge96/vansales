@@ -1,0 +1,33 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Remarks
+    </h1>
+  </div>
+   <div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='data'
+                gridLines='Both'
+                 rowHeight="25"
+                [allowPaging]='true'
+                [allowSorting]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+              [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true' [columns]="gridFields"> 
+            </ejs-grid>
+  
+        </div>
+        <div class="remarksButtns">
+          <button type="button" class="btn  btn-sm e-btn  m-0 " (click)="Clear()">Cancel</button>
+          <button type="button" class="btn  btn-sm e-btn e-primary m-0 ml-2" data-ripple="true" disabled="{{saveBtnDisabled}}" (click)="Save()">Save</button>
+  
+        </div>
+    </div>
+  </div>
+  
+

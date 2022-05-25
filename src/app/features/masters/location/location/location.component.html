@@ -1,0 +1,129 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Location Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='locationList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'rowHeight="25"
+                [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='locationCode' headerText='Location Code' isPrimaryKey='true'></e-column>
+                    <e-column field='locationName' headerText='Location Name'></e-column>
+                    <e-column field='cityName' headerText='City'></e-column>
+                    <!-- <e-column field='createdDate' headerText='Created Date'>
+                        <ng-template #template let-d>
+                            {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                        </ng-template>
+                    </e-column> -->
+                    <e-column headerText='Action' width="80" [commands]="syncfusionHelperService.commands"  ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="locationForm">
+                        <div class="d-flex flex-wrap">
+
+                            <div [ngClass]="{'form-label-group': locationCode.value, 'form-group' : !locationCode.value }" class="col-12" >
+                              <input type="text"  class="form-control e-input input-control" id="locationCode" formControlName="locationCode">
+                              <label class="input-control-placeholder" for="locationCode">Location Code</label>
+
+                            </div>
+
+                            <div class="form-label-group col-12"
+                              [ngClass]="{'e-error': locationName.invalid && (locationName.dirty || locationName.touched || submitClicked)}">
+                              <input type="text" class="form-control e-input input-control" id="locationName" placeholder="Location Name" formControlName="locationName"  autocomplete ='off'>
+                              <label class="input-control-placeholder" for="locationName">Location Name</label>
+                              <sup class="text-danger">*</sup>
+                              <div *ngIf="locationName.invalid && (locationName.dirty || locationName.touched || submitClicked)" class="e-error d-block">
+                                    <div *ngIf="locationName.errors.required">
+                                       Name is required.
+                                    </div>
+                                    <div *ngIf="locationName.errors.maxlength">
+                                        Name cannot be more than 36 characters.
+                                    </div>
+                                    <div *ngIf="locationName.errors.pattern">
+                                         Name should contain only alphabets.
+                                    </div>
+                              </div>
+
+                            </div>
+
+                            <div class="form-group col-12"
+                                  [ngClass]="{'e-error': cityId.invalid && (cityId.dirty || cityId.touched || submitClicked)}">
+                                  <ejs-dropdownlist   formControlName="cityId" [allowFiltering]="true"  [dataSource]='cityList' [fields]="{text: 'cityName', value: 'id' }" placeholder="City"
+                                  floatLabelType='Auto' cssClass='e-filled' >
+                                  </ejs-dropdownlist>
+                                  <!-- <label class="input-control-placeholder" for="city">City</label> -->
+                                  <sup class="text-danger">*</sup>
+                                  <div *ngIf="cityId.invalid && (cityId.dirty || cityId.touched || submitClicked)"  class="e-error d-block">
+                                    <div *ngIf="cityId.errors.required">
+                                    City is required.
+                                    </div>
+                                  </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Location Master Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Location Code :</div>
+                <div> {{locationView?.locationCode}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Location Name : </div>
+                <div class="w-50 text-truncate" title="{{locationView?.locationName}}"> {{locationView?.locationName}} </div>
+            </div>
+                <div class="view-item col-6">
+                    <div> City :</div>
+                    <div> {{locationView?.cityName}} </div>
+                </div>
+                <div class="view-item col-6">
+                    <div> Created Date :</div>
+                    <div> {{locationView?.createdDate}} </div>
+                </div>
+                </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>
+

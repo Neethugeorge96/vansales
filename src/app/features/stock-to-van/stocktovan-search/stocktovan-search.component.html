@@ -1,0 +1,100 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Stock To Van Search    </h1>
+    <!-- <button class="btn btn-outline-primary btn-sm" routerLink="/masters/routemaster">Back<i class="fal fa-arrow-left ml-2"></i>
+    </button> -->
+</div>
+<div class="subpage-content">
+    <form [formGroup]="searchForm" autocomplete="off">
+        <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+            <div class="form-group col-5" [ngClass]="{'e-error': fromDate.invalid && (fromDate.dirty || fromDate.touched || submitClickedMain)}">
+                <ejs-datepicker formControlName="fromdate" [max]="maxDate" (ngModelChange)="minDate = fromDate.value" format="dd/MM/yyyy"  id="fromDate" cssClass='e-filled' placeholder="From Date" floatLabelType='Auto'></ejs-datepicker>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="fromDate.invalid && ( fromDate.dirty || fromDate.touched || submitClickedMain)"
+                    class="e-error d-block">
+                    <div *ngIf="fromDate.errors.required" >
+                        From Date is required.
+                    </div>
+                    </div>
+            </div>
+            <div class="form-group col-5">
+                <ejs-dropdownlist
+                formControlName="routeId"
+               [dataSource]='routeList'
+               [allowFiltering]="true"
+               [fields]="{text: 'diplayText', value: 'id' }"
+               placeholder="Route No."
+               floatLabelType='Auto'
+               (ngModelChange)="showRouteClearBtn = routeId.value ? true : false;"
+               [showClearButton]="showRouteClearBtn"
+               cssClass='e-static-clear e-filled'>
+           </ejs-dropdownlist>
+                    <!-- <input type="text" class="form-control e-input input-control" id="routeNumber"  placeholder="Route Number" formControlName="routeNumber">
+                    <label class="input-control-placeholder form-label" for="routeNumber">Route Number</label> -->
+            </div>
+            <div class="form-group col-5" [ngClass]="{'e-error': toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)}">
+                <ejs-datepicker formControlName="toDate" [min]="minDate"  id="toDate" cssClass='e-filled' format="dd/MM/yyyy" placeholder="To Date" floatLabelType='Auto'></ejs-datepicker>
+                <sup class="text-danger">*</sup>
+                <div *ngIf="toDate.invalid && (toDate.dirty || toDate.touched || submitClickedMain)"
+                    class="e-error d-block">
+                    <div *ngIf="toDate.errors.required">
+                        To Date is required.
+                    </div>
+                    </div>
+            </div>
+            <div class="form-label-group col-5">
+                <ejs-dropdownlist
+                formControlName="vanId"
+               [dataSource]='vanList'
+               [allowFiltering]="true"
+               (ngModelChange)="showvanClearBtn = vanId.value ? true : false;"
+               [fields]="{text: 'diplayText', value: 'id' }"
+               placeholder="Van No."
+               floatLabelType='Auto'
+               [showClearButton]="showvanClearBtn"
+               cssClass='e-static-clear e-filled'>
+           </ejs-dropdownlist>
+                <!-- <input type="text" class="form-control e-input input-control" id="vanNumber"  placeholder="Van Number" formControlName="vanNumber">
+                <label class="input-control-placeholder form-label" for="vanNumber">Van Number</label> -->
+            </div>
+
+        <div class="button-right-wrapper col-2 ml-n4 pt-2">
+            <button type="submit" class="btn btn-sm btn-color" (click)="searchData()">
+                Search
+              </button>
+              <button type="reset" class="btn btn-sm btn-color" (click)="resetSearch()">
+                Reset
+              </button>
+        </div>
+        </div>
+    </form>
+    <!-- table section -->
+    <div class="card p-3">
+    <ejs-grid #Grid gridLines="Both"  [allowResizing]='true' [dataSource]='stocktovanlist' [childGrid]='childGrid'  (detailDataBound)="getchildgridData($event)"
+                [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+                [toolbar]="toolbarExternal"
+                [rowHeight]="syncfusionHelperService.height"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(Grid)"
+                (load)="syncfusionHelperService.load(Grid)">
+        <e-columns>
+            <e-column field='stockCode' headerText='Import Reference Code'></e-column>
+            <e-column field='stockInDate' headerText='StockIn Date'>
+                <!-- <ng-template #template let-d>
+                    {{d.stockInDate | date: 'dd-MM-yyy'}}
+                </ng-template> -->
+            </e-column>
+            <e-column field='vanNumber' headerText='Van No.'></e-column>
+            <e-column field='routeNo' headerText='Route No.'></e-column>
+            <e-column field='locationName' headerText='Location Name'></e-column>
+            <e-column field='createdDate' headerText='Created Date'>
+                <ng-template #template let-d>
+                    {{d.createdDate}}
+                </ng-template>
+            </e-column>
+        </e-columns>
+    </ejs-grid>
+    </div>
+    </div>

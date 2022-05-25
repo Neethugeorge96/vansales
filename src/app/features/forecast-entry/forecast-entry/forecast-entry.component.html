@@ -1,0 +1,222 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+    {{activatedRoute.snapshot.params.id ? 'Edit Forecast entry Details' : 'Create Forecast entry Details'}}
+  </h1>
+  <button class="btn btn-outline-primary btn-sm" routerLink="/forecast-entry">Back<i class="fal fa-arrow-left ml-2"></i>
+  </button>
+</div>
+
+<div class="subpage-content">
+  <form [formGroup]="forecastFrm" autocomplete="off" *ngIf="forecastFrm">
+    <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+      <div class="form-label-group col-4"
+        [ngClass]="{'e-error': forecastDate.invalid && (forecastDate.dirty || forecastDate.touched || submitClickedMain)}">
+        <ejs-datepicker formControlName="forecastDate" [max]="maxDate" (ngModelChange)="minDate = forecastDate.value"
+          format="dd/MM/yyyy" id="forecastDate" cssClass='e-filled' placeholder="Forecast Date" floatLabelType='Auto'>
+        </ejs-datepicker>
+        <sup class="text-danger">*</sup>
+
+        <div *ngIf="forecastDate.invalid && (forecastDate.dirty || forecastDate.touched || submitClickedMain)"
+          class="e-error d-block">
+          <div *ngIf="forecastDate.errors.required">
+            Forecast Date is required.
+          </div>
+        </div>
+      </div>
+      <div class="form-label-group col-4"
+        [ngClass]="{'e-error': entryDate.invalid && (entryDate.dirty || entryDate.touched || submitClickedMain)}">
+        <ejs-datepicker formControlName="entryDate" [min]="minDate" (ngModelChange)="maxDate = entryDate.value"
+          id="entryDate" cssClass='e-filled' format="dd/MM/yyyy" placeholder="Entry Date" floatLabelType='Auto'>
+        </ejs-datepicker>
+        <sup class="text-danger">*</sup>
+        <div *ngIf="entryDate.invalid && (entryDate.dirty || entryDate.touched || submitClickedMain)"
+          class="e-error d-block">
+          <div *ngIf="entryDate.errors.required">
+            Entry Date is required.
+          </div>
+        </div>
+      </div>
+      <div class="form-label-group col-4"
+        [ngClass]="{'e-error': employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClickedMain)}">
+        <ejs-dropdownlist formControlName="employeeId" [dataSource]='employeeList' [allowFiltering]="true"
+          (ngModelChange)="showEmployeeClearBtn = employeeId.value ? true : false;"
+          [fields]="{text: 'diplayText', value: 'id' }" placeholder="Employee Name" floatLabelType='Auto'
+          [showClearButton]="showEmployeeClearBtn" cssClass='e-static-clear e-filled'>
+        </ejs-dropdownlist>
+        <sup class="text-danger">*</sup>
+        <div *ngIf="employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClickedMain)"
+          class="e-error d-block">
+          <div *ngIf="employeeId.errors.required">
+            Employee Name is required.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+  <div class="card p-3">
+    <ejs-grid #grid [dataSource]='forecastDetails' gridLines='Both' rowHeight="25" [allowPaging]='false'
+      [allowSorting]='true' [pageSettings]="syncfusionHelperService.initialPage" (actionBegin)='actionBegin($event)'
+      [rowHeight]="syncfusionHelperService.height"
+      (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+      [toolbar]='syncfusionHelperService.toolbarInline' [editSettings]="editExternal"
+      (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+      (created)="syncfusionHelperService.created(grid)" (load)="syncfusionHelperService.inlineGridLoad(grid)">
+      <e-columns>
+        <e-column headerText='S.No.' width='80' isPrimaryKey="true" field="id">
+          <ng-template #template let-d>
+            <div>{{ +d.index+1 }}</div>
+          </ng-template>
+        </e-column>
+        <e-column headerText='Customer' field="customerName">
+          <!-- <ng-template #template let-data>
+            <div>
+              {{getCustomerName(data.customerId) }}
+            </div>
+          </ng-template> -->
+        </e-column>
+        <e-column headerText='Item Code/Name' field="itemName">
+          <!-- <ng-template #template let-data>
+            <div>
+              {{getItemName(data.itemId)}}
+            </div>
+          </ng-template> -->
+        </e-column>
+        <e-column  headerText='UOM' field="uomName">
+          <!-- <ng-template #template let-data>
+            <div>
+              {{getUomName(data.uomMasterId) }}
+            </div>
+          </ng-template> -->
+        </e-column>
+        <e-column field='quantity' headerText='Quantity'></e-column>
+        <e-column field='remarks' headerText='Remarks'></e-column>
+      </e-columns>
+
+
+      <ng-template #editSettingsTemplate let-data>
+        <div [formGroup]="forecastDetailsFrm">
+          <table class="e-table e-inline-edit" cellspacing="0.25">
+            <colgroup>
+              <col width='55'>
+              <col>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td width='55'></td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': customerId.invalid && (customerId.dirty || customerId.touched || submitClicked)}">
+                    <ejs-dropdownlist name="customerId" [allowFiltering]='true' placeholder="Customer Name" (filtering)=" syncfusionHelperService.onFiltering(  $event,  customerList,  'code', 'customerName')"
+                      formControlName="customerId" popupHeight='240px' [dataSource]='customerList'
+                      [fields]="{text: 'customerName', value: 'id' }">
+                      <ng-template #itemTemplate="" let-data="">
+                          <span>
+                            <span>{{data.code}} -
+                              <span class="fs-sm">
+                                {{data.customerName}}</span>
+                            </span>
+                          </span>
+                        </ng-template>
+                    </ejs-dropdownlist>
+                    <div *ngIf="customerId.invalid && (customerId.dirty || customerId.touched || submitClicked)"
+                      class="e-error d-block">
+                      <div *ngIf="customerId.errors.required">
+                        Customer is required.
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': itemId.invalid && (itemId.dirty || itemId.touched || submitClicked)}">
+                    <ejs-dropdownlist name="itemId" [allowFiltering]='true' placeholder="Item Code/ Name"
+                      formControlName="itemId" popupHeight='240px' [dataSource]='itemsList'
+                      [fields]="{text: 'itemName', value: 'id' }" (change)="selectUom($event)" (filtering)=" syncfusionHelperService.onFiltering(  $event,  itemsList,  'code', 'itemName')">
+                      <ng-template #itemTemplate="" let-data="">
+                        <span>
+                          <span>{{data.code}} -
+                            <span class="fs-sm">
+                              {{data.itemName}}</span>
+                          </span>
+                        </span>
+                      </ng-template>
+                    </ejs-dropdownlist>
+                    <div *ngIf="itemId.invalid && (itemId.dirty || itemId.touched || submitClicked)"
+                      class="e-error d-block">
+                      <div *ngIf="itemId.errors.required">
+                        Item is required.
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': uomMasterId.invalid && (uomMasterId.dirty || uomMasterId.touched || submitClicked)}">
+                    <!-- <ejs-dropdownlist name="uomName" [allowFiltering]='true' placeholder="UOM Name"
+                      formControlName="uomName" popupHeight='240px' [dataSource]='uomList'
+                      [fields]="{text: 'code', value: 'id' }">
+                    </ejs-dropdownlist> -->
+
+                    <input type="text" class="form-control e-input input-control" id="uomName"
+                    placeholder="UOM" formControlName="uomName" disabled>
+
+                    <div *ngIf="uomMasterId.invalid && (uomMasterId.dirty || uomMasterId.touched || submitClicked)"
+                      class="e-error d-block">
+                      <div *ngIf="uomMasterId.errors.required">
+                        UOM is required.
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': quantity.invalid && (quantity.dirty || quantity.touched || submitClicked)}">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="quantity" placeholder="Quantity"
+                        formControlName="quantity">
+
+                      <div *ngIf="quantity.invalid && (quantity.dirty || quantity.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="quantity.errors.required">
+                          Quantity is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class='e-rowcell'>
+                  <div class="form-group"
+                    [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                    <div>
+                      <input type="text" class="form-control e-input input-control" id="remarks" placeholder="Remarks"
+                        formControlName="remarks">
+
+                      <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="remarks.errors.required">
+                          Remarks is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+
+    </ejs-grid>
+    <div class="button-right-wrapper my-3">
+      <button type="button" routerLink="/forecast-entry" class="btn  btn-sm e-btn  m-0 mr-2">Cancel</button>
+      <button type="button" class="btn  btn-sm e-btn e-primary m-0" data-ripple="true"
+        (click)="clearSearch()">Save</button>
+    </div>
+  </div>
+</div>

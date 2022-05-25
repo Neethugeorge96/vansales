@@ -1,0 +1,198 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Assignment Details
+    </h1>
+</div>
+<div class="subpage-content">
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='assignmentList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+                (actionComplete)='actionComplete($event)'
+                 rowHeight="25"
+                 [allowSorting]='true'
+                [allowPaging]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editExternal"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column headerText='Route No.' isPrimaryKey='true'>
+                      <ng-template #template let-d>
+                        <div>{{getRouteNo(d.routeName)}}</div>
+                     </ng-template>
+                    </e-column>
+                    <e-column field='vanNumber' headerText='Van No.'></e-column>
+                    <e-column field='employeeName' headerText='Employee'></e-column>
+                    <e-column headerText='Is Active'>
+                        <ng-template #template let-data>
+                            <div >
+                              <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isActive,
+                                'e-badge-no' : !data.isActive
+                              }">
+                              {{data.isActive?'Yes':'No'}}
+                              </span>
+                           </div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='assignmentDate' headerText='Assignment'></e-column>
+
+                    <e-column headerText='Action' width="110" [commands]="syncfusionHelperService.commands" ></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data >
+                    <div [formGroup]="assignmentForm">
+                        <div class="d-flex flex-wrap">
+                            <div class="form-group col-12"  [ngClass]="{'e-error': routeId.invalid && (routeId.dirty || routeId.touched || submitClicked)}">
+                                <ejs-dropdownlist
+                                formControlName="routeId"
+                               [dataSource]='routeList'
+                               (filtering)=" syncfusionHelperService.onFiltering(  $event,  routeList,  'routeNo', 'routeName')"
+                               [allowFiltering]="true"
+                               [fields]="{text: 'diplayText', value: 'id' }"
+                               placeholder="Route No."
+                              floatLabelType='Auto'
+                              cssClass='e-filled'>
+                           </ejs-dropdownlist>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="routeId.invalid && (routeId.dirty || routeId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="routeId.errors.required">
+                                    Route No. is required.
+                                </div>
+                                <div *ngIf="routeId.errors.duplicate">
+                                    Route No. already exists.
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-group col-12"  [ngClass]="{'e-error': vanId.invalid && (vanId.dirty || vanId.touched || submitClicked)}">
+                                <ejs-dropdownlist
+                                formControlName="vanId"
+                               [dataSource]='vanList'
+                               [fields]="{text: 'diplayText', value: 'id' }"
+                               (filtering)=" syncfusionHelperService.onFiltering(  $event,  vanList,  'vanNumber', 'vanModel')"
+                               [allowFiltering]="true"
+                               placeholder="Van No."
+                               floatLabelType='Auto'
+                               cssClass='e-filled'>
+                           </ejs-dropdownlist>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="vanId.invalid && (vanId.dirty || vanId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="vanId.errors.required">
+                                    Van No.is required.
+                                </div>
+                                <div *ngIf="vanId.errors.duplicate">
+                                    Van No.already exists.
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-group col-12"  [ngClass]="{'e-error': employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClicked)}">
+                                <ejs-dropdownlist
+                                formControlName="employeeId"
+                               [dataSource]='employeeList'
+                               (filtering)=" syncfusionHelperService.onFiltering(  $event,  employeeList,  'code', 'employeeName')"
+                               [allowFiltering]="true"
+                               [fields]="{text: 'diplayText', value: 'id' }"
+                               placeholder="Employee"
+                               floatLabelType='Auto'
+                               cssClass='e-filled'>
+                           </ejs-dropdownlist>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="employeeId.invalid && (employeeId.dirty || employeeId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="employeeId.errors.required">
+                                    Employee is required.
+                                </div>
+                                <div *ngIf="employeeId.errors.duplicate">
+                                    Employee already exists.
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-group col-12" >
+                            <div>
+                                <ejs-checkbox  formControlName="isActive"></ejs-checkbox>
+                                <label class="ml-2" for="isActive">Is Active</label>
+                            </div>
+                            </div>
+
+                            <div class="form-group col-12"  [ngClass]="{'e-error': assignmentDate.invalid && (assignmentDate.dirty || assignmentDate.touched || submitClicked)}">
+                                <ejs-datepicker strictMode='false' formControlName="assignmentDate" [min]='minDate'  cssClass='e-filled' format="dd/MM/yyyy" placeholder="Assignment Date" floatLabelType='Auto'></ejs-datepicker>
+                                <sup class="text-danger">*</sup>
+                                <div *ngIf="assignmentDate.invalid && (assignmentDate.dirty || assignmentDate.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="assignmentDate.errors.required">
+                                    Assignment Date is required.
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Assignment Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Route No. :</div>
+                <div> {{assignmentView?.routeName}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Van No. : </div>
+                <div> {{assignmentView?.vanNumber}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Employee :</div>
+                <div> {{assignmentView?.employeeName}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Assignment Date :</div>
+                <div> {{assignmentView?.assignmentDate}} </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap row">
+            <div class="view-item col-6">
+                <div> Is Active :</div>
+                <div> {{assignmentView?.isActive ? 'Yes' : 'No'}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Created Date :</div>
+                <div> {{assignmentView?.createdDate}} </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

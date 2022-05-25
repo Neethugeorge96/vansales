@@ -1,0 +1,84 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Route Master
+    </h1>
+</div>
+<div class="subpage-content">
+
+  <form [formGroup]="searchForm" autocomplete="off">
+    <div class="d-flex flex-wrap align-items-start pb-3 pt-3 col-md-12">
+
+         <div class="form-label-group col-4">
+          <ejs-dropdownlist  placeholder="Customer"  formControlName="customerId" [dataSource]="customerList"
+          [fields]="{ text: 'diplayText', value: 'id' }"  (ngModelChange)="showCustomerClearBtn = getCustomer.value ? true : false;" floatLabelType='Auto' [showClearButton]="showCustomerClearBtn"
+           cssClass='e-static-clear e-filled' >
+          </ejs-dropdownlist>
+        </div>
+
+        <div class="form-label-group col-4">
+          <ejs-dropdownlist  [dataSource]='branchList' popupHeight='150px'
+                        formControlName="branchId" [fields]="{text: 'branchName', value: 'id' }" [allowFiltering]='true' placeholder="Branch"
+                        floatLabelType='Auto' cssClass='e-filled' (ngModelChange)="showRouteClearBtn = getBranch.value ? true : false;" floatLabelType='Auto' [showClearButton]="showRouteClearBtn">
+                    </ejs-dropdownlist>
+        </div>
+
+
+
+        <div class="button-right-wrapper col-4 ml-n4 pt-2">
+          <button type="button" class="btn btn-sm btn-color" (click)="searchData()">
+            Search
+          </button>
+          <button type="button" class="btn btn-sm btn-color" (click)="resetSearch()">
+            Reset
+          </button>
+        </div>
+    </div>
+
+  </form>
+
+    <div class="card p-3">
+        <div>
+            <ejs-grid #grid [dataSource]='routeList'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)' rowHeight="25"
+                [allowPaging]='true'
+                [allowSorting]='true'
+                [pageSettings]="syncfusionHelperService.initialPage"
+        	    [rowHeight]="syncfusionHelperService.height"
+                (rowDataBound)="syncfusionHelperService.rowDataBound($event, grid, 0)"
+                [toolbar]="syncfusionHelperService.toolbarExternal"
+                [editSettings]="syncfusionHelperService.editInline"
+                (headerCellInfo)="syncfusionHelperService.headerCellInfo($event)"
+                (created)="syncfusionHelperService.created(grid)"
+                (load)="syncfusionHelperService.load(grid)"
+                [allowResizing]='true'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='60'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='routeNo' headerText='Route No.' isPrimaryKey='true'></e-column>
+                    <e-column field='routeName' headerText='Route Name'></e-column>
+                    <e-column field='branchName' headerText='Branch'></e-column>
+                    <e-column headerText='Is Active'>
+                        <ng-template #template let-data>
+                            <div >
+                              <span class="e-badge" [ngClass]="{'e-badge-yes' : data.isActive === true,
+                                'e-badge-no' : data.isActive === false
+                              }">
+                              {{data.isActive?'Yes':'No'}}
+                              </span>
+                           </div>
+                        </ng-template>
+                    </e-column>
+                    <!-- <e-column field='createdDate' headerText='Created Date'>
+                        <ng-template #template let-d>
+                            {{d.createdDate | date: 'dd-MMM-yyyy'}}
+                        </ng-template>
+                    </e-column> -->
+                    <e-column headerText='Action' width="110" [commands]="syncfusionHelperService.commands"></e-column>
+                </e-columns>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
